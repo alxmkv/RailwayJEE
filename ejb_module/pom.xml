@@ -1,0 +1,70 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>ejb_module</artifactId>
+	<packaging>ejb</packaging>
+	<name>ejb_module</name>
+	<!--1. To check project
+			mvn validate
+		2. To compile source code
+			mvn compile
+		3. To do unit testing
+			mvn test
+		4. To package compiled code into jar/war/ear
+			mvn package
+		5. To process and deploy the package if necessary into an environment
+			mvn integration-test
+		6. To verify the package is valid and meets quality criteria
+			mvn verify
+		7. To clean target dir, build project and update dependencies locally
+			mvn clean install -U
+		8. To copy the final package to the remote repository for sharing with other developers in an integration or release environment
+			mvn deploy -->
+	<parent>
+		<artifactId>parent-pom</artifactId>
+		<version>1.0</version>
+		<groupId>js.jee</groupId>
+	</parent>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-ejb-plugin</artifactId>
+				<configuration>
+					<ejbVersion>3.1</ejbVersion>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
+			<version>2.0-beta4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>2.0-beta4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
+			<version>4.2.0.CR2</version>
+			<!-- <exclusions>
+				<exclusion>
+					<artifactId>
+						hibernate-commons-annotations
+					</artifactId>
+					<groupId>org.hibernate.common</groupId>
+				</exclusion>
+			</exclusions> -->
+		</dependency>
+	</dependencies>
+</project>

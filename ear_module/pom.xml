@@ -1,0 +1,58 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>ear_module</artifactId>
+	<packaging>ear</packaging>
+	<name>ear_module</name>
+
+	<parent>
+		<artifactId>parent-pom</artifactId>
+		<version>1.0</version>
+		<groupId>js.jee</groupId>
+	</parent>
+
+	<dependencies>
+		<dependency>
+			<groupId>js.jee</groupId>
+			<artifactId>ejb_module</artifactId>
+			<version>1.0</version>
+			<type>ejb</type>
+		</dependency>
+		<dependency>
+			<groupId>js.jee</groupId>
+			<artifactId>web_module</artifactId>
+			<version>1.0</version>
+			<type>war</type>
+		</dependency>
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-ear-plugin</artifactId>
+				<configuration>
+					<version>1.4</version>
+					<modules>
+						<ejbModule>
+							<groupId>js.jee</groupId>
+							<artifactId>ejb_module</artifactId>
+						</ejbModule>
+						<webModule>
+							<groupId>js.jee</groupId>
+							<artifactId>web_module</artifactId>
+						</webModule>
+					</modules>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.2.1</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.9</version>
+			</plugin>
+		</plugins>
+	</build>
+</project>

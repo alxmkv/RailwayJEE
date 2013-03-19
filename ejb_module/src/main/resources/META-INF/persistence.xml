@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+	<persistence-unit name="Railway" transaction-type="JTA">
+		<provider>org.hibernate.ejb.HibernatePersistence</provider>
+		<jta-data-source>Railway</jta-data-source>
+		<!-- <class>js.entity.Stations</class>
+		<class>js.entity.Tickets</class>
+		<class>js.entity.Timetable</class>
+		<class>js.entity.Trains</class>
+		<class>js.entity.Users</class> -->
+		<properties>
+			<property name="hibernate.ejb.cfgfile" value="hibernate.cfg.xml"/>
+			<!-- <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect"></property>
+			<property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver"/>
+			<property name="hibernate.connection.url" value="jdbc:mysql://localhost/railway"/>
+			<property name="hibernate.connection.password" value="db13RWAY"/>
+			<property name="hibernate.connection.username" value="rwclient"/>
+			<property name="hibernate.default_schema" value="Railway"/> -->
+			<property name="hibernate.transaction.manager_lookup_class" value="org.hibernate.transaction.SunONETransactionManagerLookup" />
+		</properties>
+	</persistence-unit>
+  <!-- <persistence-unit name="ejb_module"
+    transaction-type="JTA">
+    <jta-data-source>jdbc/__default</jta-data-source>
+    <properties>
+      <property name="eclipselink.jdbc.driver"
+        value="com.mysql.jdbc.Driver" />
+
+      <property name="eclipselink.jdbc.url"
+        value="jdbc:mysql://localhost/railway" />
+
+      <property name="eclipselink.jdbc.user" value="rwclient" />
+      <property name="eclipselink.jdbc.password" value="db13RWAY" /> -->
+      
+      <!-- <property name="eclipselink.ddl-generation"
+        value="drop-and-create-tables" />
+
+      <property name="eclipselink.ddl-generation.output-mode"
+        value="database" /> -->
+
+      <!-- Logging -->
+      <!--  <property name="eclipselink.logging.level" value="FINE" />
+      <property name="eclipselink.logging.timestamp" value="false" />
+      <property name="eclipselink.logging.session" value="false" />
+      <property name="eclipselink.logging.thread" value="false" />
+
+    </properties>
+  </persistence-unit> -->
+</persistence>

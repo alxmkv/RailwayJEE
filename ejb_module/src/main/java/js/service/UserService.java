@@ -17,7 +17,7 @@ import js.exception.UserRegistrationFailedException;
 public class UserService {
 
 	@EJB
-	private UserDAOImpl userDAOImpl;
+	private UserDAOImpl userDAOImpl = new UserDAOImpl();
 
 	public Boolean authenticateUser(String login, String password)
 			throws UserAuthenticationFailedException {

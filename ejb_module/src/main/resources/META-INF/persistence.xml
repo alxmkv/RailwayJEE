@@ -11,7 +11,6 @@
 		<class>js.entity.Trains</class>
 		<class>js.entity.Users</class> -->
 		<properties>
-			<property name="hibernate.ejb.cfgfile" value="hibernate.cfg.xml"/>
 			<!-- <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect"></property>
 			<property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver"/>
 			<property name="hibernate.connection.url" value="jdbc:mysql://localhost/railway"/>
@@ -19,6 +18,7 @@
 			<property name="hibernate.connection.username" value="rwclient"/>
 			<property name="hibernate.default_schema" value="Railway"/> -->
 			<property name="hibernate.transaction.manager_lookup_class" value="org.hibernate.transaction.SunONETransactionManagerLookup" />
+			<property name="hibernate.ejb.cfgfile" value="hibernate.cfg.xml"/>
 		</properties>
 	</persistence-unit>
   <!-- <persistence-unit name="ejb_module"

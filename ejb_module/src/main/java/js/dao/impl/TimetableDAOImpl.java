@@ -1,5 +1,6 @@
 package js.dao.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -32,7 +33,7 @@ public class TimetableDAOImpl implements TimetableDAO {
 					.createCriteria(Stations.class)
 					.add(Restrictions.eq("name", station.getName()))
 					.uniqueResult();
-			timetables= stationT.getTimetablesForDepartureStationId();
+			timetables = stationT.getTimetablesForDepartureStationId();
 			HibernateUtil.commitTransaction();
 		} catch (HibernateException e) {
 			HibernateUtil.rollbackTransaction();
@@ -43,9 +44,37 @@ public class TimetableDAOImpl implements TimetableDAO {
 		return timetables;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public List<?> getTrainsFromAToBInTimeInterval(Stations stationA,
-			Stations stationB, Date timeFrom, Date timeTo) {
-		return null;
+	public List<Timetable> getTimetableFromAToBInTimeInterval(
+			Stations stationA, Stations stationB, Date timeFrom, Date timeTo) {
+		List<Timetable> timetables = new ArrayList<Timetable>();
+		try {
+			HibernateUtil.beginTransaction();
+			Stations stationAT = (Stations) HibernateUtil.getSession()
+					.createCriteria(Stations.class)
+					.add(Restrictions.eq("name", stationA.getName()))
+					.uniqueResult();
+			Stations stationBT = (Stations) HibernateUtil.getSession()
+					.createCriteria(Stations.class)
+					.add(Restrictions.eq("name", stationB.getName()))
+					.uniqueResult();
+			timetables = (List<Timetable>) HibernateUtil
+					.getSession()
+					.createCriteria(Timetable.class)
+					.add(Restrictions.eq("stationsByDepartureStationId",
+							stationAT))
+					.add(Restrictions.eq("stationsByArrivalStationId",
+							stationBT))
+					.add(Restrictions
+							.between("departureTime", timeFrom, timeTo)).list();
+			HibernateUtil.commitTransaction();
+		} catch (HibernateException e) {
+			HibernateUtil.rollbackTransaction();
+			return null;
+		} finally {
+			HibernateUtil.closeSession();
+		}
+		return timetables;
 	}
 }

@@ -19,7 +19,7 @@ public interface TimetableDAO {
 	 * @return List of trains going from station A to station B in a fixed time
 	 *         interval
 	 */
-	public List<?> getTrainsFromAToBInTimeInterval(Stations stationA,
+	public List<Timetable> getTimetableFromAToBInTimeInterval(Stations stationA,
 			Stations stationB, Date timeFrom, Date timeTo);
 
 	/**

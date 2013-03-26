@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration status="warn" name="Test">
+	<appenders>
+		<appender name="RollingFileLogger" fileName="logs/error.log" filePattern="error.%i.log"
+						append="true" bufferedIO="false" immediateFlush="true">
+			<layout	type="PatternLayout" pattern="%d{dd-MM-yyyy HH:mm:ss.SSS} %r [%t] %p %c %x - %m%n"/>
+			<Policies>
+				<SizeBasedTriggeringPolicy size="1 MB"/>
+			</Policies>
+			<DefaultRolloverStrategy max="4"/>
+		</appender>
+	</appenders>
+	<loggers>
+		<logger name="org.hibernate" level="error">
+			<appender-ref ref="RollingFileAppender"/>
+		</logger>
+		<root level="info">
+			<appender-ref ref="RollingFileLogger"/>
+		</root>
+	</loggers>
+</configuration>

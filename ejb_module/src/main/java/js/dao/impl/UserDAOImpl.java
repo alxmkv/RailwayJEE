@@ -10,8 +10,6 @@ import java.util.List;
 import java.util.Set;
 
 import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceUnit;
 
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.Order;
@@ -22,7 +20,7 @@ import js.dao.HibernateUtil;
 import js.dao.UserDAO;
 import js.entity.Tickets;
 import js.entity.Users;
-import js.exception.UserAuthenticationFailedException;
+import js.exception.DataAccessException;
 import js.exception.UserRegistrationFailedException;
 
 /**
@@ -30,21 +28,10 @@ import js.exception.UserRegistrationFailedException;
  */
 @Stateless
 public class UserDAOImpl implements UserDAO {
-
-	@PersistenceUnit
-	private EntityManager em;
-
-	public Users createUser(String name) {
-		Users user = new Users();
-		user.setName(name);
-		em.persist(user);
-		return user;
-	}
-
 	@Override
-	public Users registerUser(String login, String password, String email,
+	public Boolean registerUser(String login, String password, String email,
 			String name, String surname, Date birthDate)
-			throws UserRegistrationFailedException {
+			throws UserRegistrationFailedException, DataAccessException {
 		MessageDigest md5 = null;
 		MessageDigest sha256 = null;
 		byte[] sha256Bytes = null;
@@ -57,9 +44,9 @@ public class UserDAOImpl implements UserDAO {
 				strBuilder.append((char) (b + 128));
 			}
 		} catch (NoSuchAlgorithmException e) {
-			throw new UserRegistrationFailedException(e.getLocalizedMessage());
+			throw new DataAccessException(e.getLocalizedMessage());
 		} catch (UnsupportedEncodingException e) {
-			throw new UserRegistrationFailedException(e.getLocalizedMessage());
+			throw new DataAccessException(e.getLocalizedMessage());
 		}
 		Users user = new Users(login, strBuilder.toString(), email, name,
 				surname, birthDate, Byte.parseByte("2"), Byte.parseByte("1"));
@@ -87,16 +74,16 @@ public class UserDAOImpl implements UserDAO {
 			HibernateUtil.commitTransaction();
 		} catch (HibernateException e) {
 			HibernateUtil.rollbackTransaction();
-			throw new UserRegistrationFailedException(e.getLocalizedMessage());
+			throw new DataAccessException(e.getLocalizedMessage());
 		} finally {
 			HibernateUtil.closeSession();
 		}
-		return user;
+		return (user.getStatus() == 1);
 	}
 
 	@Override
 	public Boolean authenticateUser(String login, String password)
-			throws UserAuthenticationFailedException {
+			throws DataAccessException {
 		MessageDigest md5 = null;
 		MessageDigest sha256 = null;
 		byte[] sha256Bytes = null;
@@ -109,9 +96,9 @@ public class UserDAOImpl implements UserDAO {
 				strBuilder.append((char) (b + 128));
 			}
 		} catch (NoSuchAlgorithmException e) {
-			throw new UserAuthenticationFailedException(e.getLocalizedMessage());
+			throw new DataAccessException(e.getLocalizedMessage());
 		} catch (UnsupportedEncodingException e) {
-			throw new UserAuthenticationFailedException(e.getLocalizedMessage());
+			throw new DataAccessException(e.getLocalizedMessage());
 		}
 		Long count = null;
 		try {
@@ -124,7 +111,7 @@ public class UserDAOImpl implements UserDAO {
 			HibernateUtil.commitTransaction();
 		} catch (HibernateException e) {
 			HibernateUtil.rollbackTransaction();
-			return Boolean.FALSE;
+			throw new DataAccessException(e.getLocalizedMessage());
 		} finally {
 			HibernateUtil.closeSession();
 		}
@@ -133,9 +120,8 @@ public class UserDAOImpl implements UserDAO {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Users> getAllUsers() {
+	public List<Users> getAllUsers() throws DataAccessException {
 		List<Users> users = new ArrayList<Users>();
-		// ScrollableResults results = null;
 		try {
 			HibernateUtil.beginTransaction();
 			users = (List<Users>) HibernateUtil.getSession()
@@ -144,7 +130,7 @@ public class UserDAOImpl implements UserDAO {
 			HibernateUtil.commitTransaction();
 		} catch (HibernateException e) {
 			HibernateUtil.rollbackTransaction();
-			return null;
+			throw new DataAccessException(e.getLocalizedMessage());
 		} finally {
 			HibernateUtil.closeSession();
 		}
@@ -152,7 +138,7 @@ public class UserDAOImpl implements UserDAO {
 	}
 
 	@Override
-	public Set<Tickets> getTicketsByUser(Users user) {
+	public Set<Tickets> getTicketsByUser(Users user) throws DataAccessException {
 		Set<Tickets> tickets = new HashSet<Tickets>();
 		try {
 			HibernateUtil.beginTransaction();
@@ -164,10 +150,19 @@ public class UserDAOImpl implements UserDAO {
 			HibernateUtil.commitTransaction();
 		} catch (HibernateException e) {
 			HibernateUtil.rollbackTransaction();
-			return null;
+			throw new DataAccessException(e.getLocalizedMessage());
 		} finally {
 			HibernateUtil.closeSession();
 		}
 		return tickets;
 	}
+
+	// @PersistenceUnit
+	// private EntityManager em;
+	// public Users createUser(String name) {
+	// Users user = new Users();
+	// user.setName(name);
+	// em.persist(user);
+	// return user;
+	// }
 }

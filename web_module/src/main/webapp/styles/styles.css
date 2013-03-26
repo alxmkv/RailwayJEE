@@ -1,0 +1,213 @@
+/* Cascading Style Sheet */
+/* CSS Box Model: content->padding->border->margin */
+/* Total element width/height = width/height + 2 * padding + 2 * border + 2 * margin */
+/* margin: top right bottom left */
+
+/* ========================================== */
+/* Layout */
+/* ========================================== */
+html { /*    height:100%;*/
+	/*    overflow-y:scroll;*/
+	
+}
+
+body {
+	background: #CECECE; /*for non-CSS3 browsers*/
+	font-size: 100%; /*16px*/
+	font-family: Verdana, Arial, sans-serif;
+	height: 100%;
+	margin: 0 auto;
+	text-align: center; /*for central alignment in IE*/
+}
+
+#content {
+	background: #E0E0E0; /*for non-CSS3 browsers*/
+	font-size: 0.75em;
+	min-height: 100%;
+	margin: 0 auto;
+	text-align: left; /*for central alignment in IE*/
+	width: 960px;
+}
+
+* html #content {
+	height: 100%;
+}
+
+#content-main {
+	padding-bottom: 40px;
+	margin-right: 20px;
+}
+
+#content-main h2 {
+	font-size: 1.75em;
+}
+
+.content-header {
+	font-size: 4.25em;
+	text-align: center;
+}
+
+.content-header img {
+	z-index: -1;
+}
+
+.language-switcher {
+	color: #FFC800;
+	font-size: 1.2em;
+	position: relative;
+	left: 910px;
+	bottom: 45px;
+}
+
+.content-body { /*    background:white;*/
+	
+}
+
+#content-desc { /*    background:white;*/
+	border: 1px solid gray;
+	float: right;
+	height: 270px;
+	margin: 20px;
+	padding: 20px;
+	text-align: justify;
+	width: 550px;
+}
+
+#content-text {
+	text-align: justify;
+}
+
+.content-footer {
+	clear: both;
+	height: 40px;
+	margin-top: -60px;
+}
+
+.content-footer label {
+	font-size: 1.0em;
+	margin-right: 10px;
+}
+
+.content-footer label:hover {
+	background-color: #e7f5f8;
+	text-decoration: none;
+}
+/* ========================================== */
+/* Forms */
+/* ========================================== */
+.form {
+	background: #B8B8B8; /*for non-CSS3 browsers*/
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#909090',
+		endColorstr='#cccccc' ); /*for background in IE*/
+	background: -webkit-gradient(linear, left top, left bottom, from(#909090),
+		to(#ccc) ); /*for Webkit browsers*/
+	background: -moz-linear-gradient(top, #909090, #ccc);
+	/*for Firefox 3.6+*/
+	height: auto;
+	width: 100%;
+}
+
+#login-form,#search-form {
+	padding: 100px;
+}
+
+#register-form {
+	display: none;
+	padding: 100px;
+}
+
+input[type=text],input[type=password],textarea {
+	width: 130px;
+}
+
+.table-header td {
+	background: gray;
+}
+
+.table-tr1 {
+	background: #B0B0B0;
+}
+
+.table-tr2 {
+	background: #D0D0D0;
+}
+/* ========================================== */
+/* Menu */
+/* ========================================== */
+.menu {
+	width: 250px;
+}
+
+.menu a:hover {
+	text-decoration: none;
+}
+
+.menu li {
+	font-size: 1.5em;
+	list-style-type: none;
+	margin-bottom: 3px;
+}
+
+.menu-ajax-label { /*    color:slateblue;*/
+	cursor: pointer;
+	text-decoration: underline;
+}
+
+.menu-ajax-label:hover { /*    color:red;*/
+	font-weight: bold;
+	text-decoration: none;
+}
+/* ========================================== */
+/* JQuery UI elements */
+/* ========================================== */
+div.ui-datepicker {
+	font-size: 0.75em;
+}
+
+#newvc-button {
+	background: #FFC800;
+	color: #222;
+	border: 1px solid #111;
+	float: left;
+	font-size: 0.75em;
+	margin-bottom: 5px;
+}
+
+.jquery-button {
+	-webkit-border-radius: 7px;
+	-moz-border-radius: 7px;
+	border-radius: 7px;
+	font-weight: bold;
+	width: 135px;
+}
+
+#login-form:register-button,#home-button,#login-button,#login-button-reg,#create-button,#search-button
+	{
+	-webkit-border-radius: 7px;
+	-moz-border-radius: 7px;
+	border-radius: 7px;
+	font-weight: bold;
+	width: 135px;
+}
+/* ========================================== */
+/* General */
+/* ========================================== */
+ul li {
+	margin-left: 0px;
+}
+
+ul ul li {
+	margin-left: 10px;
+}
+
+a {
+	color: black;
+}
+
+a:hover {
+	font-weight: bold;
+}
+
+em {
+	color: blue;
+}

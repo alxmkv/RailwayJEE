@@ -1,0 +1,115 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title>Welcome</title>
+	<link type="text/css" rel="stylesheet" href="styles/styles.css"></link>
+	<script type="text/javascript" src="js/jquery_actions.js"></script>
+</h:head>
+
+<body>
+	<div id="header">
+		<div
+			style="font-size: 36px; line-height: 60px; background-color: navy; color: white">
+			Railway Application</div>
+	</div>
+
+	<div id="content">
+		<div class="form">
+			<h:form id="search-form">
+				<h:panelGrid columns="3">
+					<h:outputLabel for="name">From:</h:outputLabel>
+					<h:inputText id="from" label="From"
+						value="#{timetableServiceBean.timetableDTO.departureStation}"
+						required="true"
+						requiredMessage="Please enter station of departure">
+					</h:inputText>
+					<h:message for="from" />
+
+					<h:outputLabel for="to">To:</h:outputLabel>
+					<h:inputText id="to" label="To"
+						value="#{timetableServiceBean.timetableDTO.arrivalStation}"
+						required="false">
+					</h:inputText>
+					<h:message for="to" />
+
+					<h:outputLabel for="fromTime">Time from (hh:mm):</h:outputLabel>
+					<h:inputText id="fromTime" label="FromTime"
+						value="#{timetableServiceBean.timetableDTO.timeFrom}"
+						required="false">
+					</h:inputText>
+					<h:message for="fromTime" />
+
+					<h:outputLabel for="toTime">Time to (hh:mm):</h:outputLabel>
+					<h:inputText id="toTime" label="toTime"
+						value="#{timetableServiceBean.timetableDTO.timeTo}"
+						required="false">
+					</h:inputText>
+					<h:message for="toTime" />
+
+					<h:panelGroup />
+					<p:commandButton value="Search"
+						action="#{timetableServiceBean.getTimetableFromAToBInTimeInterval}"
+						styleClass="jquery-button" update="timetables">
+					</p:commandButton>
+					<h:messages globalOnly="true" layout="table" />
+				</h:panelGrid>
+
+				<p:dataTable id="timetables"
+					value="timetableServiceBean.timetableList">
+					<f:facet name="header">Train timetable from <h:outputText
+							value="#{timetableServiceBean.timetableDTO.departureStation}" /> to <h:outputText
+							value="#{timetableServiceBean.timetableDTO.arrivalStation}" /> in [<h:outputText
+							value="#{timetableServiceBean.timetableDTO.timeFrom}" /> - <h:outputText
+							value="#{timetableServiceBean.timetableDTO.timeTo}" />]
+					</f:facet>
+					<p:column
+						sortBy="#{timetableServiceBean.timetableList.trainNumber}"
+						headerText="Train #">
+						<h:outputText
+							value="#{timetableServiceBean.timetableList.trainNumber}" />
+					</p:column>
+					<p:column sortBy="#{timetableServiceBean.timetableList.trainName}"
+						headerText="Train Name">
+						<h:outputText
+							value="#{timetableServiceBean.timetableList.trainName}" />
+					</p:column>
+					<p:column
+						sortBy="#{timetableServiceBean.timetableList.arrivalStation}"
+						headerText="Destination">
+						<h:outputText
+							value="#{timetableServiceBean.timetableList.arrivalStation}" />
+					</p:column>
+					<p:column
+						sortBy="#{timetableServiceBean.timetableList.departureTime}"
+						headerText="Departure">
+						<h:outputText
+							value="#{timetableServiceBean.timetableList.departureTime}" />
+					</p:column>
+					<p:column
+						sortBy="#{timetableServiceBean.timetableList.arrivalTime}"
+						headerText="Arrival">
+						<h:outputText
+							value="#{timetableServiceBean.timetableList.arrivalTime}" />
+					</p:column>
+					<p:column
+						sortBy="#{timetableServiceBean.timetableList.ticketsLeft}"
+						headerText="Tickets #">
+						<h:outputText
+							value="#{timetableServiceBean.timetableList.ticketsLeft}" />
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</div>
+	</div>
+
+	<div id="footer">
+		<div style="background-color: navy; color: white; line-height: 60px">
+			Copyright Alexander Markov 2013</div>
+	</div>
+</body>
+</html>

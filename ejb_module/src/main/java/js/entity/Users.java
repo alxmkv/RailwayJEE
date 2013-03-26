@@ -27,7 +27,7 @@ import javax.persistence.UniqueConstraint;
 		@UniqueConstraint(columnNames = "email") })
 public class Users implements java.io.Serializable {
 
-	private static final long serialVersionUID = 6170283239615115639L;
+	private static final long serialVersionUID = 1L;
 
 	private Long id;
 	private String login;

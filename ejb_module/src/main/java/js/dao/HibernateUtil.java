@@ -16,19 +16,29 @@ public class HibernateUtil {
 
 	private static final Logger logger = LogManager
 			.getLogger(HibernateUtil.class);
-	private static final SessionFactory sessionFactory;
+	private static SessionFactory sessionFactory;
+	private static HibernateUtil hibernateUtil;
 
-	static {
-		try {
-			// Create the SessionFactory from hibernate.cfg.xml
-			Configuration configuration = new Configuration().configure();
-			sessionFactory = configuration
-					.buildSessionFactory(new ServiceRegistryBuilder()
-							.applySettings(configuration.getProperties())
-							.buildServiceRegistry());
-		} catch (Throwable ex) {
-			logger.error("Initial SessionFactory creation failed." + ex);
-			throw new ExceptionInInitializerError(ex);
+	private HibernateUtil() {
+	}
+
+	/**
+	 * Initialize Hibernate utility
+	 */
+	public static void init() {
+		if (hibernateUtil == null) {
+			hibernateUtil = new HibernateUtil();
+			try {
+				// Create the SessionFactory from hibernate.cfg.xml
+				Configuration configuration = new Configuration().configure();
+				sessionFactory = configuration
+						.buildSessionFactory(new ServiceRegistryBuilder()
+								.applySettings(configuration.getProperties())
+								.buildServiceRegistry());
+			} catch (Throwable ex) {
+				logger.error("Initial SessionFactory creation failed. " + ex);
+				throw new ExceptionInInitializerError(ex);
+			}
 		}
 	}
 

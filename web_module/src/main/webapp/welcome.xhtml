@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title>Welcome</title>
+	<link type="text/css" rel="stylesheet" href="styles/styles.css"></link>
+	<script type="text/javascript" src="js/jquery_actions.js"></script>
+</h:head>
+
+<body>
+	<div id="header">
+		<div
+			style="font-size: 36px; line-height: 60px; background-color: navy; color: white">
+			Railway Application</div>
+	</div>
+
+	<div id="content">
+		<div class="form">
+			<h:form id="search-form">
+				<h:panelGrid columns="3">
+					<h:outputLabel for="name">From:</h:outputLabel>
+					<h:inputText id="name" label="Name" value="#{userBean.user.name}"
+						required="true" requiredMessage="Please enter your first name">
+						<f:ajax event="blur" render="nameMessage" />
+					</h:inputText>
+					<h:message id="nameMessage" for="name" />
+
+					<h:outputLabel for="name">Surname:</h:outputLabel>
+					<h:inputText id="surname" label="Surname"
+						value="#{userBean.user.surname}" required="true"
+						requiredMessage="Please enter your last name">
+						<f:ajax event="blur" render="surnameMessage" />
+					</h:inputText>
+					<h:message id="surnameMessage" for="surname" />
+
+					<h:outputLabel for="email">Email:</h:outputLabel>
+					<h:inputText id="email" label="Email"
+						value="#{userBean.user.email}" required="true"
+						requiredMessage="Please enter email">
+						<f:ajax event="blur" render="emailMessage" />
+					</h:inputText>
+					<h:message id="emailMessage" for="email" />
+
+					<h:outputLabel for="birthdate">Birthdate (yyyy-mm-dd):</h:outputLabel>
+					<h:inputText id="birthdate" label="Birthdate"
+						value="#{userBean.user.birthdate}"
+						converterMessage="Please enter your birthdate in yyyy-mm-dd format">
+						<f:convertDateTime pattern="yyyy-MM-dd" />
+						<f:ajax event="blur" render="birthdateMessage" />
+					</h:inputText>
+					<h:message id="birthdateMessage" for="birthdate" />
+
+					<h:outputLabel for="login">Login:</h:outputLabel>
+					<h:inputText id="login" label="Login"
+						value="#{userBean.user.login}" required="true"
+						requiredMessage="Please enter your user name">
+						<f:ajax event="blur" render="loginMessage" />
+					</h:inputText>
+					<h:message id="loginMessage" for="login" />
+
+					<h:outputLabel for="password">Password:</h:outputLabel>
+					<h:inputSecret id="password" label="Password"
+						value="#{userBean.user.password}" required="true"
+						requiredMessage="Please enter your password" redisplay="true">
+						<f:ajax event="blur" render="passwordMessage" />
+					</h:inputSecret>
+					<h:message id="passwordMessage" for="password" />
+
+					<h:panelGroup />
+					<p:commandButton value="Sign in" action="#{userBean.registerUser}"
+						styleClass="jquery-button">
+					</p:commandButton>
+					<h:messages globalOnly="true" layout="table" />
+				</h:panelGrid>
+			</h:form>
+		</div>
+	</div>
+
+	<div id="footer">
+		<div style="background-color: navy; color: white; line-height: 60px">
+			Copyright Alexander Markov 2013</div>
+	</div>
+
+</body>
+</html>

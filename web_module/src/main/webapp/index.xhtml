@@ -1,0 +1,120 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title>Welcome</title>
+	<link type="text/css" rel="stylesheet" href="styles/styles.css"></link>
+	<script type="text/javascript" src="js/jquery_actions.js"></script>
+</h:head>
+
+<body>
+	<div id="header">
+		<div
+			style="font-size: 36px; line-height: 60px; background-color: navy; color: white">
+			Railway Application</div>
+	</div>
+
+	<div id="content">
+		<div class="form">
+			<h:form id="login-form">
+				<h:panelGrid columns="3">
+					<h:panelGroup />
+					<p:commandButton type="button" value="Register"
+						id="register-button" styleClass="jquery-button" />
+					<h:panelGroup />
+
+					<h:outputLabel for="login">Login:</h:outputLabel>
+					<p:inputText id="login" value="#{userBean.user.login}"
+						required="true" requiredMessage="Please, enter your user name"
+						label="Login">
+					</p:inputText>
+					<p:message for="login" />
+
+					<h:outputLabel for="password">Password:</h:outputLabel>
+					<p:password id="password" value="#{userBean.user.password}"
+						required="true" requiredMessage="Please, enter your password"
+						label="Password"></p:password>
+					<p:message for="password" />
+
+					<h:panelGroup />
+					<p:commandButton value="Sign in" ajax="false"
+						action="#{userBean.authenticateUser}" styleClass="jquery-button"></p:commandButton>
+
+					<h:messages globalOnly="true" layout="table" />
+				</h:panelGrid>
+			</h:form>
+
+			<h:form id="register-form">
+				<h:panelGrid columns="3">
+					<h:panelGroup />
+					<p:commandButton type="button" value="Home" id="home-button"
+						styleClass="jquery-button" />
+					<h:panelGroup />
+
+					<h:outputLabel for="name">Name:</h:outputLabel>
+					<p:inputText id="name" label="Name" value="#{userBean.user.name}"
+						required="true" requiredMessage="Please enter your first name">
+					</p:inputText>
+					<p:message for="name" />
+
+					<h:outputLabel for="name">Surname:</h:outputLabel>
+					<p:inputText id="surname" label="Surname"
+						value="#{userBean.user.surname}" required="true"
+						requiredMessage="Please enter your last name">
+					</p:inputText>
+					<p:message for="surname" />
+
+					<h:outputLabel for="email">Email:</h:outputLabel>
+					<p:inputText id="email" label="Email"
+						value="#{userBean.user.email}" required="true"
+						requiredMessage="Please enter email"
+						validatorMessage="Invalid email format">
+						<p:watermark for="email" value="email@test.com"></p:watermark>
+						<f:validateRegex
+							pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$"></f:validateRegex>
+					</p:inputText>
+					<p:message for="email" />
+
+					<h:outputLabel for="birthdate">Birthdate (yyyy-mm-dd):</h:outputLabel>
+					<p:inputText id="birthdate" label="Birthdate"
+						value="#{userBean.user.birthdate}"
+						converterMessage="Please enter your birthdate in yyyy-mm-dd format">
+						<f:convertDateTime pattern="yyyy-MM-dd" />
+						<p:watermark for="birthdate" value="1980-01-01"></p:watermark>
+					</p:inputText>
+					<p:message for="birthdate" />
+
+					<h:outputLabel for="login">Login:</h:outputLabel>
+					<p:inputText id="login" value="#{userBean.user.login}"
+						required="true" requiredMessage="Please, enter your user name"
+						label="Login">
+					</p:inputText>
+					<p:message for="login" />
+
+					<h:outputLabel for="password">Password:</h:outputLabel>
+					<p:password id="password" value="#{userBean.user.password}"
+						required="true" requiredMessage="Please, enter your password"
+						label="Password"></p:password>
+					<p:message for="password" />
+
+					<h:panelGroup />
+					<p:commandButton value="Sign in" ajax="false"
+						action="#{userBean.registerUser}" styleClass="jquery-button">
+					</p:commandButton>
+					<h:messages globalOnly="true" layout="table" />
+				</h:panelGrid>
+			</h:form>
+		</div>
+	</div>
+
+	<div id="footer">
+		<div style="background-color: navy; color: white; line-height: 60px">
+			Copyright Alexander Markov 2013</div>
+	</div>
+
+</body>
+</html>

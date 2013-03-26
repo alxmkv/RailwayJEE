@@ -50,13 +50,13 @@ public class Timetable implements java.io.Serializable {
 
 	public Timetable(Stations stationsByArrivalStationId,
 			Stations stationsByDepartureStationId, Trains trains,
-			Date departureTime, Date arrivalTime, Set<Tickets> ticketses) {
+			Date departureTime, Date arrivalTime, Set<Tickets> tickets) {
 		this.stationsByArrivalStationId = stationsByArrivalStationId;
 		this.stationsByDepartureStationId = stationsByDepartureStationId;
 		this.trains = trains;
 		this.departureTime = departureTime;
 		this.arrivalTime = arrivalTime;
-		this.tickets = ticketses;
+		this.tickets = tickets;
 	}
 
 	@Id

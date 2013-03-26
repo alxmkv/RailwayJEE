@@ -15,17 +15,18 @@ import js.dao.HibernateUtil;
 import js.dao.TimetableDAO;
 import js.entity.Stations;
 import js.entity.Timetable;
+import js.exception.DataAccessException;
+import js.exception.InvalidInputException;
 
 /**
- * Session Bean implementation class TimetableDAOImpl
- * 
  * @author Alexander Markov
  */
 @Stateless
 public class TimetableDAOImpl implements TimetableDAO {
 
 	@Override
-	public Set<Timetable> getTimetableByStation(Stations station) {
+	public Set<Timetable> getTimetableByStation(Stations station)
+			throws DataAccessException, InvalidInputException {
 		Set<Timetable> timetables = new HashSet<Timetable>();
 		try {
 			HibernateUtil.beginTransaction();
@@ -33,11 +34,15 @@ public class TimetableDAOImpl implements TimetableDAO {
 					.createCriteria(Stations.class)
 					.add(Restrictions.eq("name", station.getName()))
 					.uniqueResult();
+			if (stationT == null) {
+				throw new InvalidInputException("Station " + station.getName()
+						+ " does not exist");
+			}
 			timetables = stationT.getTimetablesForDepartureStationId();
 			HibernateUtil.commitTransaction();
 		} catch (HibernateException e) {
 			HibernateUtil.rollbackTransaction();
-			return null;
+			throw new DataAccessException(e.getLocalizedMessage());
 		} finally {
 			HibernateUtil.closeSession();
 		}
@@ -47,31 +52,43 @@ public class TimetableDAOImpl implements TimetableDAO {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Timetable> getTimetableFromAToBInTimeInterval(
-			Stations stationA, Stations stationB, Date timeFrom, Date timeTo) {
+			Stations departureStation, Stations arrivalStation, Date timeFrom,
+			Date timeTo) throws DataAccessException, InvalidInputException {
 		List<Timetable> timetables = new ArrayList<Timetable>();
 		try {
 			HibernateUtil.beginTransaction();
-			Stations stationAT = (Stations) HibernateUtil.getSession()
+			Stations stationA = (Stations) HibernateUtil.getSession()
 					.createCriteria(Stations.class)
-					.add(Restrictions.eq("name", stationA.getName()))
+					.add(Restrictions.eq("name", departureStation.getName()))
 					.uniqueResult();
-			Stations stationBT = (Stations) HibernateUtil.getSession()
+			if (stationA == null) {
+				throw new InvalidInputException("Station "
+						+ departureStation.getName() + " does not exist");
+			}
+			Stations stationB = (Stations) HibernateUtil.getSession()
 					.createCriteria(Stations.class)
-					.add(Restrictions.eq("name", stationB.getName()))
+					.add(Restrictions.eq("name", arrivalStation.getName()))
 					.uniqueResult();
+			if (stationB == null) {
+				throw new InvalidInputException("Station "
+						+ arrivalStation.getName() + " does not exist");
+			}
+			if (timeFrom.after(timeTo)) {
+				throw new InvalidInputException("Incorrect time interval");
+			}
 			timetables = (List<Timetable>) HibernateUtil
 					.getSession()
 					.createCriteria(Timetable.class)
 					.add(Restrictions.eq("stationsByDepartureStationId",
-							stationAT))
-					.add(Restrictions.eq("stationsByArrivalStationId",
-							stationBT))
+							stationA))
+					.add(Restrictions
+							.eq("stationsByArrivalStationId", stationB))
 					.add(Restrictions
 							.between("departureTime", timeFrom, timeTo)).list();
 			HibernateUtil.commitTransaction();
 		} catch (HibernateException e) {
 			HibernateUtil.rollbackTransaction();
-			return null;
+			throw new DataAccessException(e.getLocalizedMessage());
 		} finally {
 			HibernateUtil.closeSession();
 		}

@@ -97,14 +97,14 @@ public class HibernateTest {
 	@Test
 	public void getTimetableByStationTest() throws DataAccessException,
 			InvalidInputException {
-		Map<Integer, TimetableServiceDTO> timetable = timetableService
+		Map<String, TimetableServiceDTO> timetable = timetableService
 				.getTimetableByStation("Saint-Petersburg");
-		Set<Integer> trainNumbers = timetable.keySet();
+		Set<String> trainNumbers = timetable.keySet();
 		Assert.assertEquals(false, trainNumbers.isEmpty());
 		System.out.println("train number\ttrain name\tdestination\t"
 				+ "departure time\tarrival time\ttickets left");
-		for (Integer trainNumber : trainNumbers) {
-			System.out.println(trainNumber.toString() + "\t"
+		for (String trainNumber : trainNumbers) {
+			System.out.println(trainNumber + "\t"
 					+ timetable.get(trainNumber).getTrainName() + "\t"
 					+ timetable.get(trainNumber).getArrivalStation() + "\t"
 					+ timetable.get(trainNumber).getDepartureTime() + "\t"
@@ -122,7 +122,7 @@ public class HibernateTest {
 	@Test
 	public void getTimetableFromAToBInTimeIntervalTest() throws ParseException,
 			DataAccessException, InvalidInputException {
-		SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm");
+		SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
 		Map<Integer, TimetableServiceDTO> timetable = timetableService
 				.getTimetableFromAToBInTimeInterval("Saint-Petersburg",
 						"Moscow", timeFormat.parse("23:00"),
@@ -143,7 +143,7 @@ public class HibernateTest {
 	@Test(expected = InvalidInputException.class)
 	public void getTimetableFromAToBInTimeIntervalTestWithException()
 			throws ParseException, DataAccessException, InvalidInputException {
-		SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm");
+		SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
 		timetableService.getTimetableFromAToBInTimeInterval("Saint-Petersburg",
 				"Moscow", timeFormat.parse("23:59"), timeFormat.parse("23:00"));
 	}
@@ -169,14 +169,14 @@ public class HibernateTest {
 	@Test(expected = DataAccessException.class)
 	public void addTrainTestWithException() throws DataAccessException,
 			ParseException {
-		SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm");
+		SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
 		trainService.addTrain(1, "Existing train", 400, "Saint-Petersburg",
 				"Moscow", timeFormat.parse("23:00"), timeFormat.parse("8:00"));
 	}
 
 	@Test
 	public void addTrainTest() throws DataAccessException, ParseException {
-		SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm");
+		SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
 		Assert.assertEquals(true, trainService.addTrain(200, "Eiffel Tower",
 				500, "Saint-Petersburg", "Paris", timeFormat.parse("23:00"),
 				timeFormat.parse("8:00")));
@@ -232,7 +232,7 @@ public class HibernateTest {
 	public void buyTicketTest() throws DataAccessException, ParseException,
 			TicketOrderFailedException, InvalidInputException {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-		SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm");
+		SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
 		Assert.assertEquals(true, ticketService.buyTicket("test", 25,
 				"Saint-Petersburg", "Moscow", dateFormat.parse("2013-05-01"),
 				timeFormat.parse("23:45"), timeFormat.parse("7:30")));
@@ -242,7 +242,7 @@ public class HibernateTest {
 	public void buyTicketTestWithException() throws DataAccessException,
 			ParseException, TicketOrderFailedException, InvalidInputException {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-		SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm");
+		SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
 		Assert.assertEquals(true, ticketService.buyTicket("test", 25,
 				"Saint-Petersburg", "Moscow", dateFormat.parse("2013-05-01"),
 				timeFormat.parse("23:45"), timeFormat.parse("7:30")));

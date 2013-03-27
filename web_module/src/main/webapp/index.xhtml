@@ -8,7 +8,7 @@
 <h:head>
 	<title>Welcome</title>
 	<link type="text/css" rel="stylesheet" href="styles/styles.css"></link>
-	<script type="text/javascript" src="js/jquery_actions.js"></script>
+	<script type="text/javascript" src="js/js_actions.js"></script>
 </h:head>
 
 <body>
@@ -81,7 +81,8 @@
 
 					<h:outputLabel for="birthdate">Birthdate (yyyy-mm-dd):</h:outputLabel>
 					<p:inputText id="birthdate" label="Birthdate"
-						value="#{userBean.user.birthdate}"
+						value="#{userBean.user.birthdate}" required="true"
+						requiredMessage="Please enter your birthdate"
 						converterMessage="Please enter your birthdate in yyyy-mm-dd format">
 						<f:convertDateTime pattern="yyyy-MM-dd" />
 						<p:watermark for="birthdate" value="1980-01-01"></p:watermark>

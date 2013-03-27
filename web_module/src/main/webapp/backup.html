@@ -11,6 +11,20 @@
 <script type="text/javascript" src="js/js_actions.js"></script> -->
 </head>
 <body>
+<p:column style="width:4%">
+						<p:commandButton id="selectButton" value="Buy"
+							title="Order a ticket" update="growl"
+							action="#{timetableServiceBean.buyTicket}"
+							actionListener="#{timetableServiceBean.buyTicket}">
+							<f:setPropertyActionListener value="#{tt}"
+								target="#{timetableServiceBean.selectedTimetable}" />
+						</p:commandButton>
+						<p:growl id="growl" showDetail="true" sticky="true" />
+					</p:column>
+<h:panelGroup />
+					<p:commandButton type="button" value="Register"
+						id="register-button" styleClass="jquery-button" />
+					<h:panelGroup />
 	<!-- <h:commandButton value="Sign in" id="login-button"
 		class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-state-hover"
 		action="#{userBean.authenticateUser}">
@@ -34,5 +48,40 @@
 						<f:ajax event="blur" render="passwordMessage" />
 					</h:inputSecret>
 					<p:message id="passwordMessage" for="password" /> -->
+	<!-- <p:column
+						sortBy="#{timetableServiceBean.timetableList.trainNumber}"
+						headerText="Train #">
+						<h:outputText
+							value="#{timetableServiceBean.timetableList.trainNumber}" />
+					</p:column>
+					<p:column sortBy="#{timetableServiceBean.timetableList.trainName}"
+						headerText="Train Name">
+						<h:outputText
+							value="#{timetableServiceBean.timetableList.trainName}" />
+					</p:column>
+					<p:column
+						sortBy="#{timetableServiceBean.timetableList.arrivalStation}"
+						headerText="Destination">
+						<h:outputText
+							value="#{timetableServiceBean.timetableList.arrivalStation}" />
+					</p:column>
+					<p:column
+						sortBy="#{timetableServiceBean.timetableList.departureTime}"
+						headerText="Departure">
+						<h:outputText
+							value="#{timetableServiceBean.timetableList.departureTime}" />
+					</p:column>
+					<p:column
+						sortBy="#{timetableServiceBean.timetableList.arrivalTime}"
+						headerText="Arrival">
+						<h:outputText
+							value="#{timetableServiceBean.timetableList.arrivalTime}" />
+					</p:column>
+					<p:column
+						sortBy="#{timetableServiceBean.timetableList.ticketsLeft}"
+						headerText="Tickets #">
+						<h:outputText
+							value="#{timetableServiceBean.timetableList.ticketsLeft}" />
+					</p:column> -->
 </body>
 </html>

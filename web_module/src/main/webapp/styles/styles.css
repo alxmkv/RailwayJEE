@@ -107,13 +107,16 @@ body {
 	width: 100%;
 }
 
-#login-form,#search-form {
+#login-form {
+	padding: 20px 20px 20px 200px;
+}
+
+#search-form {
 	padding: 100px;
 }
 
-#register-form {
-	display: none;
-	padding: 100px;
+#register-form { /*	display: none;*/
+	padding: 20px 20px 20px 100px;
 }
 
 input[type=text],input[type=password],textarea {

@@ -32,18 +32,18 @@ public class TimetableService {
 	 * @throws DataAccessException
 	 * @throws InvalidInputException
 	 */
-	public Map<Integer, TimetableServiceDTO> getTimetableByStation(
+	public Map<String, TimetableServiceDTO> getTimetableByStation(
 			String stationName) throws DataAccessException,
 			InvalidInputException {
 		Set<Timetable> timetables = timetableDAOImpl
 				.getTimetableByStation(new Stations(stationName));
-		Map<Integer, TimetableServiceDTO> result = new HashMap<Integer, TimetableServiceDTO>();
+		Map<String, TimetableServiceDTO> result = new HashMap<String, TimetableServiceDTO>();
 		Iterator<Timetable> iter = timetables.iterator();
 		while (iter.hasNext()) {
 			Timetable timetable = iter.next();
 			Trains train = timetable.getTrains();
 			result.put(
-					train.getNumber(),
+					new Integer(train.getNumber()).toString(),
 					new TimetableServiceDTO(train.getName(), timetable
 							.getStationsByArrivalStationId().getName(),
 							timetable.getDepartureTime(), timetable
@@ -79,8 +79,10 @@ public class TimetableService {
 			result.put(
 					train.getNumber(),
 					new TimetableServiceDTO(train.getName(), timetable
-							.getDepartureTime(), timetable.getArrivalTime(),
-							train.getCapacity() - timetable.getTickets().size()));
+							.getStationsByArrivalStationId().getName(),
+							timetable.getDepartureTime(), timetable
+									.getArrivalTime(), train.getCapacity()
+									- timetable.getTickets().size()));
 		}
 		return result;
 	}

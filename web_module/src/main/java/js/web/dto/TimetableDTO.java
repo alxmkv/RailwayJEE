@@ -1,16 +1,31 @@
 package js.web.dto;
 
+import java.util.Date;
+
 /**
  * @author Alexander Markov
  */
 public class TimetableDTO {
 	private String departureStation;
 	private String arrivalStation;
-	private String timeFrom;
-	private String timeTo;
+	private Date date;
+	private Date timeFrom;
+	private Date timeTo;
+	private int counter = 0;
 
 	public String getDepartureStation() {
+		if (departureStation != null) {
+			counter++;
+		}
 		return departureStation;
+	}
+
+	public int getCounter() {
+		return counter;
+	}
+
+	public void setCounter(int counter) {
+		this.counter = counter;
 	}
 
 	public void setDepartureStation(String departureStation) {
@@ -25,19 +40,27 @@ public class TimetableDTO {
 		this.arrivalStation = arrivalStation;
 	}
 
-	public String getTimeFrom() {
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
+
+	public Date getTimeFrom() {
 		return timeFrom;
 	}
 
-	public void setTimeFrom(String departureTime) {
+	public void setTimeFrom(Date departureTime) {
 		this.timeFrom = departureTime;
 	}
 
-	public String getTimeTo() {
+	public Date getTimeTo() {
 		return timeTo;
 	}
 
-	public void setTimeTo(String arrivalTime) {
+	public void setTimeTo(Date arrivalTime) {
 		this.timeTo = arrivalTime;
 	}
 }

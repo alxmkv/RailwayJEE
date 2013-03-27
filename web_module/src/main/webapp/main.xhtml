@@ -22,85 +22,84 @@
 		<div class="form">
 			<h:form id="search-form">
 				<h:panelGrid columns="3">
-					<h:outputLabel for="name">From:</h:outputLabel>
-					<h:inputText id="from" label="From"
+					<h:outputLabel for="from">From:</h:outputLabel>
+					<p:inputText id="from"
 						value="#{timetableServiceBean.timetableDTO.departureStation}"
 						required="true"
-						requiredMessage="Please enter station of departure">
-					</h:inputText>
-					<h:message for="from" />
+						requiredMessage="Please enter station of departure" label="From">
+					</p:inputText>
+					<p:message for="from" />
 
 					<h:outputLabel for="to">To:</h:outputLabel>
-					<h:inputText id="to" label="To"
+					<p:inputText id="to" label="To"
 						value="#{timetableServiceBean.timetableDTO.arrivalStation}"
 						required="false">
-					</h:inputText>
-					<h:message for="to" />
+					</p:inputText>
+					<p:message for="to" />
 
-					<h:outputLabel for="fromTime">Time from (hh:mm):</h:outputLabel>
-					<h:inputText id="fromTime" label="FromTime"
+					<h:outputLabel for="date">Date:</h:outputLabel>
+					<p:calendar value="#{timetableServiceBean.timetableDTO.date}"
+						pattern="yyyy-MM-dd" id="date" label="Date" showButtonPanel="true"
+						navigator="true" pages="2" showOtherMonths="true" required="false" />
+					<p:message for="date" />
+
+					<h:outputLabel for="fromTime">Time from:</h:outputLabel>
+					<p:calendar id="fromTime" label="FromTime"
 						value="#{timetableServiceBean.timetableDTO.timeFrom}"
-						required="false">
-					</h:inputText>
-					<h:message for="fromTime" />
+						pattern="HH:mm" timeOnly="true" required="false" />
+					<p:message for="fromTime" />
 
-					<h:outputLabel for="toTime">Time to (hh:mm):</h:outputLabel>
-					<h:inputText id="toTime" label="toTime"
+					<h:outputLabel for="toTime">Time to:</h:outputLabel>
+					<p:calendar id="toTime" label="ToTime"
 						value="#{timetableServiceBean.timetableDTO.timeTo}"
-						required="false">
-					</h:inputText>
-					<h:message for="toTime" />
+						pattern="HH:mm" timeOnly="true" required="false" />
+					<p:message for="toTime" />
 
 					<h:panelGroup />
-					<p:commandButton value="Search"
-						action="#{timetableServiceBean.getTimetableFromAToBInTimeInterval}"
-						styleClass="jquery-button" update="timetables">
+					<p:commandButton value="Search" styleClass="jquery-button"
+						update="search-form,timetables">
 					</p:commandButton>
 					<h:messages globalOnly="true" layout="table" />
 				</h:panelGrid>
 
-				<p:dataTable id="timetables"
-					value="timetableServiceBean.timetableList">
+				<p:dataTable id="timetables" var="tt"
+					value="#{timetableServiceBean.timetableList}" paginator="true"
+					rows="20" lazy="false"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="10,20,50,100">
 					<f:facet name="header">Train timetable from <h:outputText
 							value="#{timetableServiceBean.timetableDTO.departureStation}" /> to <h:outputText
 							value="#{timetableServiceBean.timetableDTO.arrivalStation}" /> in [<h:outputText
 							value="#{timetableServiceBean.timetableDTO.timeFrom}" /> - <h:outputText
 							value="#{timetableServiceBean.timetableDTO.timeTo}" />]
 					</f:facet>
-					<p:column
-						sortBy="#{timetableServiceBean.timetableList.trainNumber}"
-						headerText="Train #">
-						<h:outputText
-							value="#{timetableServiceBean.timetableList.trainNumber}" />
+					<p:column headerText="Departure">
+						<h:outputText value="#{tt.departureTime}" />
 					</p:column>
-					<p:column sortBy="#{timetableServiceBean.timetableList.trainName}"
-						headerText="Train Name">
-						<h:outputText
-							value="#{timetableServiceBean.timetableList.trainName}" />
+					<p:column headerText="Arrival">
+						<h:outputText value="#{tt.arrivalTime}" />
 					</p:column>
-					<p:column
-						sortBy="#{timetableServiceBean.timetableList.arrivalStation}"
-						headerText="Destination">
-						<h:outputText
-							value="#{timetableServiceBean.timetableList.arrivalStation}" />
+					<p:column headerText="Train #">
+						<h:outputText value="#{tt.trainNumber}" />
 					</p:column>
-					<p:column
-						sortBy="#{timetableServiceBean.timetableList.departureTime}"
-						headerText="Departure">
-						<h:outputText
-							value="#{timetableServiceBean.timetableList.departureTime}" />
+					<p:column headerText="Train Name">
+						<h:outputText value="#{tt.trainName}" />
 					</p:column>
-					<p:column
-						sortBy="#{timetableServiceBean.timetableList.arrivalTime}"
-						headerText="Arrival">
-						<h:outputText
-							value="#{timetableServiceBean.timetableList.arrivalTime}" />
+					<p:column headerText="Destination">
+						<h:outputText value="#{tt.arrivalStation}" />
 					</p:column>
-					<p:column
-						sortBy="#{timetableServiceBean.timetableList.ticketsLeft}"
-						headerText="Tickets #">
-						<h:outputText
-							value="#{timetableServiceBean.timetableList.ticketsLeft}" />
+					<p:column headerText="Tickets #">
+						<h:outputText value="#{tt.ticketsLeft}" />
+					</p:column>
+					<p:column>
+						<h:form id="button-form">
+							<p:commandButton value="Buy ticket" ajax="false"
+								action="#{timetableServiceBean.buyTicket}"
+								styleClass="jquery-button">
+								<f:setPropertyActionListener value="#{tt}"
+									target="#{timetableServiceBean.selectedTimetable}" />
+							</p:commandButton>
+						</h:form>
 					</p:column>
 				</p:dataTable>
 			</h:form>

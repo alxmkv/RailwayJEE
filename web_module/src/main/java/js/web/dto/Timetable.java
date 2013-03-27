@@ -1,9 +1,12 @@
 package js.web.dto;
 
+import java.io.Serializable;
+
 /**
  * @author Alexander Markov
  */
-public class Timetable {
+public class Timetable implements Serializable, Comparable<Timetable> {
+	private static final long serialVersionUID = 7335204061452992531L;
 	private String trainNumber;
 	private String trainName;
 	private String arrivalStation;
@@ -11,13 +14,9 @@ public class Timetable {
 	private String arrivalTime;
 	private String ticketsLeft;
 
-	public Timetable(String trainNumber, String trainName,
-			String departureTime, String arrivalTime, String ticketsLeft) {
-		this.trainNumber = trainNumber;
-		this.trainName = trainName;
-		this.departureTime = departureTime;
-		this.arrivalTime = arrivalTime;
-		this.ticketsLeft = ticketsLeft;
+	@Override
+	public int compareTo(Timetable timetable) {
+		return departureTime.compareTo(timetable.getDepartureTime());
 	}
 
 	public Timetable(String trainNumber, String trainName,
@@ -29,6 +28,9 @@ public class Timetable {
 		this.departureTime = departureTime;
 		this.arrivalTime = arrivalTime;
 		this.ticketsLeft = ticketsLeft;
+	}
+
+	public Timetable() {
 	}
 
 	public String getTrainNumber() {

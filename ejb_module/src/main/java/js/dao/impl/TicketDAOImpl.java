@@ -99,9 +99,9 @@ public class TicketDAOImpl implements TicketDAO {
 			// 3. Check if (train departure time - current time) > 10 minutes
 			// for this train and date
 			SimpleDateFormat dateTimeFormat = new SimpleDateFormat(
-					"yyyy-MM-dd hh:mm");
+					"yyyy-MM-dd HH:mm");
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-			SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm");
+			SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
 			Date currentDateTime = new Date();
 			try {
 				currentDateTime = dateTimeFormat.parse(dateTimeFormat

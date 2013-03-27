@@ -21,14 +21,6 @@ public class TimetableServiceDTO {
 		this.ticketsLeft = ticketsLeft;
 	}
 
-	public TimetableServiceDTO(String trainName, Date departureTime,
-			Date arrivalTime, Integer ticketsLeft) {
-		this.trainName = trainName;
-		this.departureTime = departureTime;
-		this.arrivalTime = arrivalTime;
-		this.ticketsLeft = ticketsLeft;
-	}
-
 	public String getTrainName() {
 		return trainName;
 	}

@@ -8,7 +8,6 @@
 <h:head>
 	<title>Welcome</title>
 	<link type="text/css" rel="stylesheet" href="styles/styles.css"></link>
-	<script type="text/javascript" src="js/js_actions.js"></script>
 </h:head>
 
 <body>
@@ -24,7 +23,9 @@
 				<h:panelGrid columns="3">
 					<h:panelGroup />
 					<p:commandButton type="button" value="Register"
-						id="register-button" styleClass="jquery-button" />
+						id="register-button"
+						onclick="document.getElementById('login-form').style.display = 'none';document.getElementById('register-form').style.display = 'block'"
+						styleClass="jquery-button" />
 					<h:panelGroup />
 
 					<h:outputLabel for="login">Login:</h:outputLabel>
@@ -52,6 +53,7 @@
 				<h:panelGrid columns="3">
 					<h:panelGroup />
 					<p:commandButton type="button" value="Home" id="home-button"
+						onclick="document.getElementById('register-form').style.display = 'none';document.getElementById('login-form').style.display = 'block'"
 						styleClass="jquery-button" />
 					<h:panelGroup />
 
@@ -98,8 +100,8 @@
 
 					<h:outputLabel for="password">Password:</h:outputLabel>
 					<p:password id="password" value="#{userBean.user.password}"
-						required="true" requiredMessage="Please, enter your password"
-						label="Password"></p:password>
+						feedback="true" required="true"
+						requiredMessage="Please, enter your password" label="Password"></p:password>
 					<p:message for="password" />
 
 					<h:panelGroup />

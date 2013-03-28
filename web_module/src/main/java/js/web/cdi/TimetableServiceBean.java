@@ -1,13 +1,16 @@
 package js.web.cdi;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import javax.ejb.EJB;
+import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.application.FacesMessage.Severity;
 import javax.faces.context.FacesContext;
@@ -29,12 +32,13 @@ import org.apache.logging.log4j.Logger;
 /**
  * @author Alexander Markov
  */
-@javax.enterprise.context.RequestScoped
 // @javax.faces.bean.ManagedBean
 // @javax.faces.bean.RequestScoped
+@SessionScoped
 @Named
-public class TimetableServiceBean {
+public class TimetableServiceBean implements Serializable {
 
+	private static final long serialVersionUID = -5713965920223977447L;
 	private static final Logger logger = LogManager
 			.getLogger(TimetableServiceBean.class);
 
@@ -44,61 +48,16 @@ public class TimetableServiceBean {
 	private TicketService ticketService;
 
 	private TimetableDTO timetableDTO = new TimetableDTO();
-
-	private List<Timetable> timetableList;
 	private Timetable selectedTimetableRow;
 
-	public void buyTicket() {
-		System.out.println("buyTicket()");
-		SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
-		try {
-			System.out.println(FacesContext.getCurrentInstance()
-					.getExternalContext().getSessionMap().keySet().iterator()
-					.next());
-			if (!ticketService.buyTicket(FacesContext.getCurrentInstance()
-					.getExternalContext().getSessionMap().keySet().iterator()
-					.next(),
-					Integer.parseInt(selectedTimetableRow.getTrainNumber()),
-					timetableDTO.getDepartureStation(),
-					selectedTimetableRow.getArrivalStation(),
-					timetableDTO.getDate(),
-					timeFormat.parse(selectedTimetableRow.getDepartureTime()),
-					timeFormat.parse(selectedTimetableRow.getArrivalTime()))) {
-				showDetailedMessage(FacesMessage.SEVERITY_ERROR,
-						"Could not buy ticket", "");
-			} else {
-				showDetailedMessage(FacesMessage.SEVERITY_INFO,
-						"Ticket for order successful!", " - "
-								+ selectedTimetableRow.getArrivalStation()
-								+ " on " + timetableDTO.getDate() + " "
-								+ selectedTimetableRow.getDepartureTime());
-			}
-		} catch (NumberFormatException e) {
-			showDetailedMessage(FacesMessage.SEVERITY_ERROR,
-					"Could not buy ticket", "");
-			logger.error(e.getLocalizedMessage());
-		} catch (DataAccessException e) {
-			showDetailedMessage(FacesMessage.SEVERITY_ERROR,
-					"Could not buy ticket. Please, try again", "");
-			logger.error(e.getLocalizedMessage());
-		} catch (TicketOrderFailedException e) {
-			showDetailedMessage(FacesMessage.SEVERITY_ERROR,
-					e.getLocalizedMessage(), "");
-			logger.error(e.getLocalizedMessage());
-		} catch (InvalidInputException e) {
-			showDetailedMessage(FacesMessage.SEVERITY_ERROR,
-					e.getLocalizedMessage(), "");
-			logger.error(e.getLocalizedMessage());
-		} catch (ParseException e) {
-			showDetailedMessage(FacesMessage.SEVERITY_ERROR,
-					"Incorrect date or time", "");
-			logger.error(e.getLocalizedMessage());
-		}
-	}
+	private List<Timetable> timetableList;
 
 	public List<Timetable> getTimetableList() {
 		if (timetableDTO.getDepartureStation() != null
-				&& timetableDTO.getCounter() == 1) {
+				&& timetableDTO.getArrivalStation() != null
+				&& timetableDTO.getDate() != null
+				&& timetableDTO.getTimeFrom() != null
+				&& timetableDTO.getTimeTo() != null) {
 			timetableList = new ArrayList<Timetable>();
 			HibernateUtil.init();
 			try {
@@ -151,16 +110,86 @@ public class TimetableServiceBean {
 					}
 				}
 			} catch (DataAccessException e) {
-				showMessage("Could not get timetable for "
-						+ timetableDTO.getDepartureStation());
+				showDetailedMessage(
+						FacesMessage.SEVERITY_ERROR,
+						"Could not get timetable for "
+								+ timetableDTO.getDepartureStation(), "");
 				logger.error(e.getLocalizedMessage());
 			} catch (InvalidInputException e) {
-				showMessage(e.getLocalizedMessage());
+				showDetailedMessage(FacesMessage.SEVERITY_ERROR,
+						e.getLocalizedMessage(), "");
 			}
 			Collections.sort(timetableList);
 			return timetableList;
 		}
 		return timetableList;
+	}
+
+	public void buyTicket() {
+		SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
+		if (timetableDTO.getDate() == null) {
+			showDetailedMessage(FacesMessage.SEVERITY_ERROR,
+					"Please enter date", "");
+			return;
+		}
+		try {
+			if (!ticketService.buyTicket(""
+					+ FacesContext.getCurrentInstance().getExternalContext()
+							.getSessionMap().get("login"),
+					Integer.parseInt(selectedTimetableRow.getTrainNumber()),
+					timetableDTO.getDepartureStation(),
+					selectedTimetableRow.getArrivalStation(),
+					timetableDTO.getDate(),
+					timeFormat.parse(selectedTimetableRow.getDepartureTime()),
+					timeFormat.parse(selectedTimetableRow.getArrivalTime()))) {
+				showDetailedMessage(FacesMessage.SEVERITY_ERROR,
+						"Could not buy ticket", "");
+			} else {
+				showDetailedMessage(
+						FacesMessage.SEVERITY_INFO,
+						"Ticket order successful!",
+						"From: " + timetableDTO.getDepartureStation()
+								+ "\nTo: "
+								+ selectedTimetableRow.getArrivalStation()
+								+ "\nDate: " + timetableDTO.getDate()
+								+ "\nDeparture time: "
+								+ selectedTimetableRow.getDepartureTime()
+								+ "\nArrival time: "
+								+ selectedTimetableRow.getArrivalTime());
+			}
+		} catch (NumberFormatException e) {
+			showDetailedMessage(FacesMessage.SEVERITY_ERROR,
+					"Could not buy ticket", "");
+			logger.error(e.getLocalizedMessage());
+		} catch (DataAccessException e) {
+			showDetailedMessage(FacesMessage.SEVERITY_ERROR,
+					"Could not buy ticket. Please, try again", "");
+			logger.error(e.getLocalizedMessage());
+		} catch (TicketOrderFailedException e) {
+			showDetailedMessage(FacesMessage.SEVERITY_ERROR,
+					e.getLocalizedMessage(), "");
+			logger.error(e.getLocalizedMessage());
+		} catch (InvalidInputException e) {
+			showDetailedMessage(FacesMessage.SEVERITY_ERROR,
+					e.getLocalizedMessage(), "");
+			logger.error(e.getLocalizedMessage());
+		} catch (ParseException e) {
+			showDetailedMessage(FacesMessage.SEVERITY_ERROR,
+					"Incorrect date or time", "");
+			logger.error(e.getLocalizedMessage());
+		}
+	}
+
+	private void showDetailedMessage(Severity severity, String summary,
+			String detail) {
+		Iterator<FacesMessage> iter = FacesContext.getCurrentInstance()
+				.getMessages();
+		while (iter.hasNext()) {
+			iter.next();
+			iter.remove();
+		}
+		FacesContext.getCurrentInstance().addMessage(null,
+				new FacesMessage(severity, summary, detail));
 	}
 
 	public void setTimetableList(List<Timetable> timetableList) {
@@ -171,24 +200,11 @@ public class TimetableServiceBean {
 		return timetableDTO;
 	}
 
-	private void showMessage(String message) {
-		FacesContext.getCurrentInstance().addMessage(null,
-				new FacesMessage(message));
-	}
-
-	private void showDetailedMessage(Severity severity, String summary,
-			String detail) {
-		FacesContext.getCurrentInstance().addMessage(null,
-				new FacesMessage(severity, summary, detail));
-	}
-
 	public Timetable getSelectedTimetableRow() {
-		System.out.println("getSelectedTimetableRow");
 		return selectedTimetableRow;
 	}
 
 	public void setSelectedTimetableRow(Timetable selectedTimetableRow) {
-		System.out.println("setSelectedTimetableRow");
 		this.selectedTimetableRow = selectedTimetableRow;
 	}
 	// @PostConstruct

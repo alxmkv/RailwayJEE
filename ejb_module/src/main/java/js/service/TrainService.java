@@ -11,6 +11,7 @@ import java.util.Set;
 import javax.ejb.Stateless;
 
 import js.dao.impl.TrainDAOImpl;
+import js.dto.TrainServiceDTO;
 import js.entity.Timetable;
 import js.entity.Trains;
 import js.entity.Users;
@@ -30,32 +31,30 @@ public class TrainService {
 	 *         station, departure time, arrival time, capacity]
 	 * @throws DataAccessException
 	 */
-	public Map<Integer, List<?>> getAllTrains() throws DataAccessException {
+	public Map<Integer, TrainServiceDTO> getAllTrains()
+			throws DataAccessException {
 		List<Trains> trains = trainDAOImpl.getAllTrains();
-		Map<Integer, List<?>> result = new HashMap<Integer, List<?>>();
+		Map<Integer, TrainServiceDTO> result = new HashMap<Integer, TrainServiceDTO>();
 		Iterator<Trains> trainIterator = trains.iterator();
 		while (trainIterator.hasNext()) {
 			Trains train = trainIterator.next();
 			Set<Timetable> timetables = train.getTimetables();
 			Iterator<Timetable> timetableIterator = timetables.iterator();
-			List<Object> list = new ArrayList<Object>();
 			if (timetableIterator.hasNext()) {
 				Timetable timetable = timetableIterator.next();
-				list.add(train.getName());
-				list.add(timetable.getStationsByDepartureStationId().getName());
-				list.add(timetable.getStationsByArrivalStationId().getName());
-				list.add(timetable.getDepartureTime());
-				list.add(timetable.getArrivalTime());
-				list.add(train.getCapacity());
+				result.put(
+						train.getNumber(),
+						new TrainServiceDTO(train.getName(), timetable
+								.getStationsByDepartureStationId().getName(),
+								timetable.getStationsByArrivalStationId()
+										.getName(), timetable
+										.getDepartureTime(), timetable
+										.getArrivalTime(), train.getCapacity()));
 			} else {
-				list.add(train.getName());
-				list.add("-");
-				list.add("-");
-				list.add("-");
-				list.add("-");
-				list.add(train.getCapacity());
+				result.put(train.getNumber(),
+						new TrainServiceDTO(train.getName(), "-", "-", null,
+								null, train.getCapacity()));
 			}
-			result.put(train.getNumber(), list);
 		}
 		return result;
 	}

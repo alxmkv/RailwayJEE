@@ -6,18 +6,25 @@
 	version="2.0">
 
 	<navigation-rule>
-		<from-view-id>/index.jsf</from-view-id>
+		<from-view-id>/index.xhtml</from-view-id>
 		<navigation-case>
 			<from-outcome>main</from-outcome>
-			<to-view-id>/main.jsf</to-view-id>
+			<to-view-id>/app/main.xhtml</to-view-id>
+			<redirect></redirect>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>index</from-outcome>
+			<to-view-id>/index.xhtml</to-view-id>
+			<redirect></redirect>
 		</navigation-case>
 	</navigation-rule>
 
 	<navigation-rule>
-		<from-view-id>/main.jsf</from-view-id>
+		<from-view-id>/app/main.xhtml</from-view-id>
 		<navigation-case>
 			<from-outcome>index</from-outcome>
-			<to-view-id>/index.jsf</to-view-id>
+			<to-view-id>/index.xhtml</to-view-id>
+			<redirect></redirect>
 		</navigation-case>
 	</navigation-rule>
 

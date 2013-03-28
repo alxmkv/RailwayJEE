@@ -1,5 +1,7 @@
 package js.web.cdi;
 
+import java.io.Serializable;
+
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
@@ -24,10 +26,9 @@ import js.web.dto.User;
  */
 @RequestScoped
 @Named
-// @SessionScoped
-// @ViewScoped
-public class UserBean {
+public class UserBean implements Serializable {
 
+	private static final long serialVersionUID = 4973271053978726749L;
 	private static final Logger logger = LogManager.getLogger(UserBean.class);
 
 	@EJB
@@ -38,11 +39,13 @@ public class UserBean {
 	public String authenticateUser() {
 		HibernateUtil.init();
 		try {
-			if (userService.authenticateUser(user.getLogin(),
-					user.getPassword())) {
-				// TODO: send to main page
+			int userType = userService.authenticateUser(user.getLogin(),
+					user.getPassword());
+			if (userType != -1) {
 				FacesContext.getCurrentInstance().getExternalContext()
-						.getSessionMap().put(user.getLogin(), "");
+						.getSessionMap().put("login", user.getLogin());
+				FacesContext.getCurrentInstance().getExternalContext()
+						.getSessionMap().put("type", new Integer(userType));
 				return "main";
 			} else {
 				showMessage("Incorrect login or password");
@@ -67,6 +70,8 @@ public class UserBean {
 			if (userService.registerUser(user.getLogin(), user.getPassword(),
 					user.getEmail(), user.getName(), user.getSurname(),
 					user.getBirthdate())) {
+				FacesContext.getCurrentInstance().getExternalContext()
+						.getSessionMap().put(user.getLogin(), new Integer(2));
 				return "main";
 			} else {
 				showMessage("Registration failed. Please, try again.");
@@ -78,7 +83,7 @@ public class UserBean {
 			logger.error(e.getLocalizedMessage());
 			showMessage("Registration failed. Please, try again.");
 		}
-		return "";
+		return "index";
 	}
 
 	private void showMessage(String message) {
@@ -89,8 +94,4 @@ public class UserBean {
 	public User getUser() {
 		return user;
 	}
-
-	// public UserBean() {
-	// user = new User();
-	// }
 }

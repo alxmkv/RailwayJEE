@@ -29,11 +29,11 @@ public class UserService {
 	/**
 	 * @param login
 	 * @param password
-	 * @return <code>true</code> if user with such login and password exists,
-	 *         <code>false</code> otherwise
+	 * @return user type if user with such login and password exists (2 for
+	 *         simple passenger, 1 for admin), <code>-1</code> otherwise
 	 * @throws DataAccessException
 	 */
-	public Boolean authenticateUser(String login, String password)
+	public int authenticateUser(String login, String password)
 			throws DataAccessException {
 		return userDAOImpl.authenticateUser(login, password);
 	}

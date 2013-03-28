@@ -8,6 +8,7 @@ import java.util.Set;
 
 import js.dao.HibernateUtil;
 import js.dto.TimetableServiceDTO;
+import js.dto.TrainServiceDTO;
 import js.exception.DataAccessException;
 import js.exception.InvalidInputException;
 import js.exception.TicketOrderFailedException;
@@ -64,7 +65,7 @@ public class HibernateTest {
 
 	@Test
 	public void authenticateUserTest() throws DataAccessException {
-		Assert.assertEquals(true, userService.authenticateUser("test", "test"));
+		Assert.assertEquals(2, userService.authenticateUser("test", "test"));
 	}
 
 	@Test
@@ -150,19 +151,19 @@ public class HibernateTest {
 
 	@Test
 	public void getAllTrainsTest() throws DataAccessException {
-		Map<Integer, List<?>> timetable = trainService.getAllTrains();
+		Map<Integer, TrainServiceDTO> timetable = trainService.getAllTrains();
 		Set<Integer> trainNumbers = timetable.keySet();
 		Assert.assertEquals(false, trainNumbers.isEmpty());
 		System.out.println("train number\ttrain name\tdeparture\t"
 				+ "destination\tdeparture time\tarrival time\tcapacity");
 		for (Integer trainNumber : trainNumbers) {
 			System.out.println(trainNumber.toString() + "\t"
-					+ timetable.get(trainNumber).get(0) + "\t"
-					+ timetable.get(trainNumber).get(1) + "\t"
-					+ timetable.get(trainNumber).get(2) + "\t"
-					+ timetable.get(trainNumber).get(3) + "\t"
-					+ timetable.get(trainNumber).get(4) + "\t"
-					+ timetable.get(trainNumber).get(5));
+					+ timetable.get(trainNumber).getTrainName() + "\t"
+					+ timetable.get(trainNumber).getDepartureStation() + "\t"
+					+ timetable.get(trainNumber).getArrivalStation() + "\t"
+					+ timetable.get(trainNumber).getDepartureTime() + "\t"
+					+ timetable.get(trainNumber).getArrivalTime() + "\t"
+					+ timetable.get(trainNumber).getTrainCapacity());
 		}
 	}
 

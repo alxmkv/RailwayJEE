@@ -82,7 +82,7 @@ public class UserDAOImpl implements UserDAO {
 	}
 
 	@Override
-	public Boolean authenticateUser(String login, String password)
+	public int authenticateUser(String login, String password)
 			throws DataAccessException {
 		MessageDigest md5 = null;
 		MessageDigest sha256 = null;
@@ -100,14 +100,14 @@ public class UserDAOImpl implements UserDAO {
 		} catch (UnsupportedEncodingException e) {
 			throw new DataAccessException(e.getLocalizedMessage());
 		}
-		Long count = null;
+		Users user = null;
 		try {
 			HibernateUtil.beginTransaction();
-			count = (Long) HibernateUtil.getSession()
+			user = (Users) HibernateUtil.getSession()
 					.createCriteria(Users.class)
 					.add(Restrictions.eq("login", login))
 					.add(Restrictions.eq("password", strBuilder.toString()))
-					.setProjection(Projections.rowCount()).uniqueResult();
+					.uniqueResult();//.setProjection(Projections.rowCount())
 			HibernateUtil.commitTransaction();
 		} catch (HibernateException e) {
 			HibernateUtil.rollbackTransaction();
@@ -115,7 +115,10 @@ public class UserDAOImpl implements UserDAO {
 		} finally {
 			HibernateUtil.closeSession();
 		}
-		return (count == 1);
+		if(user != null) {
+			return user.getUserType();
+		}
+		return -1;//(count == 1)
 	}
 
 	@SuppressWarnings("unchecked")

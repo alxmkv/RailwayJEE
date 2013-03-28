@@ -1,31 +1,22 @@
 package js.web.dto;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * @author Alexander Markov
  */
-public class TimetableDTO {
+public class TimetableDTO implements Serializable {
+
+	private static final long serialVersionUID = 7936319431478840593L;
 	private String departureStation;
 	private String arrivalStation;
 	private Date date;
 	private Date timeFrom;
 	private Date timeTo;
-	private int counter = 0;
 
 	public String getDepartureStation() {
-		if (departureStation != null) {
-			counter++;
-		}
 		return departureStation;
-	}
-
-	public int getCounter() {
-		return counter;
-	}
-
-	public void setCounter(int counter) {
-		this.counter = counter;
 	}
 
 	public void setDepartureStation(String departureStation) {

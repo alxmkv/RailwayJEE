@@ -6,7 +6,7 @@
 	xmlns:p="http://primefaces.org/ui">
 
 <h:head>
-	<title>Welcome</title>
+	<title>Railway Application - Timetable</title>
 	<link type="text/css" rel="stylesheet" href="styles/styles.css"></link>
 </h:head>
 
@@ -15,10 +15,10 @@
 		<div
 			style="font-size: 36px; line-height: 60px; background-color: navy; color: white;">
 			<h:form>Railway Application
-				<p:commandButton value="Log out" action="#{logoutBean.logout}"
+				<p:commandLink value="Log out" action="#{logoutBean.logout}"
 					styleClass="jquery-button"
-					style="font-size: 14px; position:relative;left:220px;bottom:10px;">
-				</p:commandButton>
+					style="font-size: 14px; position: relative; left: 220px; bottom: 10px; color: white;">
+				</p:commandLink>
 			</h:form>
 		</div>
 	</div>
@@ -29,20 +29,14 @@
 				<p:tabMenu activeIndex="0">
 					<p:menuitem value="Timetable" url="/app/main.jsf"
 						icon="ui-icon-search" />
-					<p:menuitem value="Trains" url="/app/trains.jsf"
-						icon="ui-icon-search" rendered="#{logoutBean.isAdmin()}" />
-					<p:menuitem value="Add train" url="/app/addtrain.jsf"
-						icon="ui-icon-wrench" rendered="#{logoutBean.isAdmin()}" />
-					<p:menuitem value="Stations" url="/app/stations.jsf"
-						icon="ui-icon-search" rendered="#{logoutBean.isAdmin()}" />
-					<p:menuitem value="Add station" url="/app/addstation.jsf"
-						icon="ui-icon-wrench" rendered="#{logoutBean.isAdmin()}" />
-					<p:menuitem value="Users" url="/app/users.jsf"
-						icon="ui-icon-person" rendered="#{logoutBean.isAdmin()}" />
-					<p:menuitem value="Passengers by train" url="/app/passengers.jsf"
-						icon="ui-icon-person" rendered="#{logoutBean.isAdmin()}" />
 					<p:menuitem value="Tickets" url="/app/tickets.jsf"
 						icon="ui-icon-document" />
+					<p:menuitem value="Trains" url="/app/trains.jsf"
+						icon="ui-icon-search" rendered="#{logoutBean.isAdmin()}" />
+					<p:menuitem value="Stations" url="/app/stations.jsf"
+						icon="ui-icon-search" rendered="#{logoutBean.isAdmin()}" />
+					<p:menuitem value="Users" url="/app/users.jsf"
+						icon="ui-icon-person" rendered="#{logoutBean.isAdmin()}" />
 				</p:tabMenu>
 			</h:form>
 
@@ -66,7 +60,8 @@
 					<h:outputLabel for="date">Date:</h:outputLabel>
 					<p:calendar value="#{timetableServiceBean.timetableDTO.date}"
 						pattern="yyyy-MM-dd" id="date" label="Date" showButtonPanel="true"
-						navigator="true" pages="2" showOtherMonths="true" required="true"
+						mindate="2013-03-28" navigator="true" pages="2"
+						showOtherMonths="true" required="true"
 						requiredMessage="Please enter date in yyyy-MM-dd format" />
 					<p:message for="date" />
 
@@ -103,22 +98,22 @@
 							value="#{timetableServiceBean.timetableDTO.departureStation}" /> to <h:outputText
 							value="#{timetableServiceBean.timetableDTO.arrivalStation}" />
 					</f:facet>
-					<p:column headerText="Departure">
+					<p:column headerText="Departure time">
 						<h:outputText value="#{tt.departureTime}" />
 					</p:column>
-					<p:column headerText="Arrival">
+					<p:column headerText="Arrival time">
 						<h:outputText value="#{tt.arrivalTime}" />
 					</p:column>
 					<p:column headerText="Train #">
 						<h:outputText value="#{tt.trainNumber}" />
 					</p:column>
-					<p:column headerText="Train Name">
+					<p:column headerText="Train name">
 						<h:outputText value="#{tt.trainName}" />
 					</p:column>
 					<p:column headerText="Destination">
 						<h:outputText value="#{tt.arrivalStation}" />
 					</p:column>
-					<p:column headerText="Tickets #">
+					<p:column headerText="Tickets available">
 						<h:outputText value="#{tt.ticketsLeft}" />
 					</p:column>
 					<p:column>

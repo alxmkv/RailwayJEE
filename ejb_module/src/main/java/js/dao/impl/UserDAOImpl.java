@@ -56,7 +56,7 @@ public class UserDAOImpl implements UserDAO {
 					.createCriteria(Users.class)
 					.add(Restrictions.eq("login", login))
 					.setProjection(Projections.rowCount()).uniqueResult();
-			if (count > 0) {
+			if (count == null || count > 0) {
 				throw new UserRegistrationFailedException(
 						"The user with the login = " + login
 								+ " already exists");
@@ -65,7 +65,7 @@ public class UserDAOImpl implements UserDAO {
 					.createCriteria(Users.class)
 					.add(Restrictions.eq("email", email))
 					.setProjection(Projections.rowCount()).uniqueResult();
-			if (count > 0) {
+			if (count == null || count > 0) {
 				throw new UserRegistrationFailedException(
 						"The user with the email = " + email
 								+ " already exists");
@@ -107,7 +107,7 @@ public class UserDAOImpl implements UserDAO {
 					.createCriteria(Users.class)
 					.add(Restrictions.eq("login", login))
 					.add(Restrictions.eq("password", strBuilder.toString()))
-					.uniqueResult();//.setProjection(Projections.rowCount())
+					.uniqueResult();// .setProjection(Projections.rowCount())
 			HibernateUtil.commitTransaction();
 		} catch (HibernateException e) {
 			HibernateUtil.rollbackTransaction();
@@ -115,10 +115,10 @@ public class UserDAOImpl implements UserDAO {
 		} finally {
 			HibernateUtil.closeSession();
 		}
-		if(user != null) {
+		if (user != null) {
 			return user.getUserType();
 		}
-		return -1;//(count == 1)
+		return -1;// (count == 1)
 	}
 
 	@SuppressWarnings("unchecked")
@@ -149,7 +149,9 @@ public class UserDAOImpl implements UserDAO {
 					.createCriteria(Users.class)
 					.add(Restrictions.eq("login", user.getLogin()))
 					.uniqueResult();
-			tickets = userT.getTickets();
+			if (userT != null) {
+				tickets = userT.getTickets();
+			}
 			HibernateUtil.commitTransaction();
 		} catch (HibernateException e) {
 			HibernateUtil.rollbackTransaction();
@@ -159,13 +161,4 @@ public class UserDAOImpl implements UserDAO {
 		}
 		return tickets;
 	}
-
-	// @PersistenceUnit
-	// private EntityManager em;
-	// public Users createUser(String name) {
-	// Users user = new Users();
-	// user.setName(name);
-	// em.persist(user);
-	// return user;
-	// }
 }

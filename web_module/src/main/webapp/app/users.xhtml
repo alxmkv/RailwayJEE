@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title>Railway Application - UserАs</title>
+	<link type="text/css" rel="stylesheet" href="styles/styles.css"></link>
+</h:head>
+
+<body>
+	<div id="header">
+		<div
+			style="font-size: 36px; line-height: 60px; background-color: navy; color: white;">
+			<h:form>Railway Application
+				<p:commandLink value="Log out" action="#{logoutBean.logout}"
+					styleClass="jquery-button"
+					style="font-size: 14px; position: relative; left: 220px; bottom: 10px; color: white;">
+				</p:commandLink>
+			</h:form>
+		</div>
+	</div>
+
+	<div id="content">
+		<div class="form">
+			<h:form>
+				<p:tabMenu activeIndex="4">
+					<p:menuitem value="Timetable" url="/app/main.jsf"
+						icon="ui-icon-search" />
+					<p:menuitem value="Tickets" url="/app/tickets.jsf"
+						icon="ui-icon-document" />
+					<p:menuitem value="Trains" url="/app/trains.jsf"
+						icon="ui-icon-search" rendered="#{logoutBean.isAdmin()}" />
+					<p:menuitem value="Stations" url="/app/stations.jsf"
+						icon="ui-icon-search" rendered="#{logoutBean.isAdmin()}" />
+					<p:menuitem value="Users" url="/app/users.jsf"
+						icon="ui-icon-person" rendered="#{logoutBean.isAdmin()}" />
+				</p:tabMenu>
+			</h:form>
+
+			<h:form id="search-form">
+				<p:commandButton value="Update" styleClass="jquery-button"
+					update="users">
+				</p:commandButton>
+
+				<p:growl id="messages" showDetail="true" />
+
+				<p></p>
+				<p:dataTable id="users" var="tt" value="#{userBean.userList}"
+					paginator="true" rows="20" lazy="false"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="10,20,50,100">
+					<f:facet name="header">Tickets
+					</f:facet>
+					<p:column headerText="Last name">
+						<h:outputText value="#{tt.surname}" />
+					</p:column>
+					<p:column headerText="Name">
+						<h:outputText value="#{tt.name}" />
+					</p:column>
+					<p:column headerText="Birth date">
+						<h:outputText value="#{tt.birthdate}" />
+					</p:column>
+					<p:column headerText="Email">
+						<h:outputText value="#{tt.email}" />
+					</p:column>
+					<p:column headerText="Login">
+						<h:outputText value="#{tt.login}" />
+					</p:column>
+					<p:column headerText="Type">
+						<h:outputText value="#{tt.userType}" />
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</div>
+	</div>
+
+	<div id="footer">
+		<div style="background-color: navy; color: white; line-height: 60px">
+			Copyright Alexander Markov 2013</div>
+	</div>
+</body>
+</html>

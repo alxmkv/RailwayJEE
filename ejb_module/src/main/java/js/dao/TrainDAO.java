@@ -26,17 +26,19 @@ public interface TrainDAO {
 	 * @param arrivalTime
 	 * @return <code>true</code> if a train is successfully added
 	 * @throws DataAccessException
+	 * @throws InvalidInputException
 	 */
 	public Boolean addTrain(Trains train, String departureStationName,
 			String arrivalStationName, Date departureTime, Date arrivalTime)
-			throws DataAccessException;
+			throws DataAccessException, InvalidInputException;
 
 	/**
-	 * @param name
-	 * @return List of passengers for this train
+	 * @param trainNumber
+	 * @param date
+	 * @return List of passengers for this train and date
 	 * @throws DataAccessException
 	 * @throws InvalidInputException
 	 */
-	public List<Users> getUsersByTrain(String name) throws DataAccessException,
-			InvalidInputException;
+	public List<Users> getUsersByTrain(Integer trainNumber, Date date)
+			throws DataAccessException, InvalidInputException;
 }

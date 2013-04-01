@@ -12,6 +12,7 @@ import javax.ejb.Stateless;
 import js.dao.impl.TimetableDAOImpl;
 import js.dto.TimetableServiceDTO;
 import js.entity.Stations;
+import js.entity.Tickets;
 import js.entity.Timetable;
 import js.entity.Trains;
 import js.exception.DataAccessException;
@@ -56,6 +57,7 @@ public class TimetableService {
 	/**
 	 * @param departureStationName
 	 * @param arrivalStationName
+	 * @param date
 	 * @param timeFrom
 	 * @param timeTo
 	 * @return Map [train number - train name, departure time, arrival time,
@@ -64,7 +66,7 @@ public class TimetableService {
 	 * @throws InvalidInputException
 	 */
 	public Map<Integer, TimetableServiceDTO> getTimetableFromAToBInTimeInterval(
-			String departureStationName, String arrivalStationName,
+			String departureStationName, String arrivalStationName, Date date,
 			Date timeFrom, Date timeTo) throws DataAccessException,
 			InvalidInputException {
 		List<Timetable> timetables = timetableDAOImpl
@@ -75,6 +77,14 @@ public class TimetableService {
 		Iterator<Timetable> iter = timetables.iterator();
 		while (iter.hasNext()) {
 			Timetable timetable = iter.next();
+			Set<Tickets> tickets = timetable.getTickets();
+			Iterator<Tickets> ticketIter = tickets.iterator();
+			int ticketCounter = 0;
+			while (ticketIter.hasNext()) {
+				if (ticketIter.next().getDate().equals(date)) {
+					ticketCounter++;
+				}
+			}
 			Trains train = timetable.getTrains();
 			result.put(
 					train.getNumber(),
@@ -82,7 +92,7 @@ public class TimetableService {
 							.getStationsByArrivalStationId().getName(),
 							timetable.getDepartureTime(), timetable
 									.getArrivalTime(), train.getCapacity()
-									- timetable.getTickets().size()));
+									- ticketCounter));
 		}
 		return result;
 	}

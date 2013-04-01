@@ -39,7 +39,8 @@ public class TicketDAOImpl implements TicketDAO {
 					.add(Restrictions.eq("login", user.getLogin()))
 					.uniqueResult();
 			if (userT == null) {
-				throw new InvalidInputException("User does not exist");
+				throw new InvalidInputException("User " + user.getLogin()
+						+ " does not exist");
 			}
 			Stations stationA = (Stations) HibernateUtil.getSession()
 					.createCriteria(Stations.class)
@@ -62,8 +63,8 @@ public class TicketDAOImpl implements TicketDAO {
 					.add(Restrictions.eq("number", train.getNumber()))
 					.uniqueResult();
 			if (trainT == null) {
-				throw new InvalidInputException("Train "
-						+ arrivalStation.getName() + " does not exist");
+				throw new InvalidInputException("Train " + train.getName()
+						+ " does not exist");
 			}
 			Timetable timetable = (Timetable) HibernateUtil
 					.getSession()
@@ -76,9 +77,21 @@ public class TicketDAOImpl implements TicketDAO {
 					.add(Restrictions.eq("departureTime", departureTime))
 					.add(Restrictions.eq("arrivalTime", arrivalTime))
 					.uniqueResult();
+			if (timetable == null) {
+				throw new InvalidInputException("Incorrect departure ("
+						+ departureTime + ") or arrival time (" + arrivalTime
+						+ ")");
+			}
 			// 1. Check if there are any available tickets for this train and
 			// date
-			if (timetable.getTickets().size() == trainT.getCapacity()) {
+			Iterator<Tickets> ticketIter = timetable.getTickets().iterator();
+			int ticketCounter = 0;
+			while (ticketIter.hasNext()) {
+				if (ticketIter.next().getDate().equals(date)) {
+					ticketCounter++;
+				}
+			}
+			if (ticketCounter >= trainT.getCapacity()) {
 				throw new TicketOrderFailedException(
 						"No tickets available for " + trainT.getName()
 								+ " train for " + date);

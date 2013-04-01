@@ -12,9 +12,7 @@
 
 <body>
 	<div id="header">
-		<div
-			style="font-size: 36px; line-height: 60px; background-color: navy; color: white">
-			Railway Application</div>
+		<div class="content-header">Railway Application</div>
 	</div>
 
 	<div id="content">
@@ -23,7 +21,6 @@
 				<h:panelGrid columns="3">
 					<h:panelGroup />
 					<p:commandButton type="button" value="Register"
-						id="register-button"
 						onclick="document.getElementById('login-form').style.display = 'none';document.getElementById('register-form').style.display = 'block'"
 						styleClass="jquery-button" />
 					<h:panelGroup />
@@ -44,7 +41,6 @@
 					<h:panelGroup />
 					<p:commandButton value="Sign in" ajax="false"
 						action="#{userBean.authenticateUser}" styleClass="jquery-button"></p:commandButton>
-
 					<h:messages globalOnly="true" layout="table" />
 				</h:panelGrid>
 			</h:form>
@@ -52,7 +48,7 @@
 			<h:form id="register-form">
 				<h:panelGrid columns="3">
 					<h:panelGroup />
-					<p:commandButton type="button" value="Home" id="home-button"
+					<p:commandButton type="button" value="Home"
 						onclick="document.getElementById('register-form').style.display = 'none';document.getElementById('login-form').style.display = 'block'"
 						styleClass="jquery-button" />
 					<h:panelGroup />
@@ -115,8 +111,7 @@
 	</div>
 
 	<div id="footer">
-		<div style="background-color: navy; color: white; line-height: 60px">
-			Copyright Alexander Markov 2013</div>
+		<div class="content-footer">Copyright Alexander Markov 2013</div>
 	</div>
 
 </body>

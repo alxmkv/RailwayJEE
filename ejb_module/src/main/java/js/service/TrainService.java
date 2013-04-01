@@ -1,6 +1,5 @@
 package js.service;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -12,6 +11,7 @@ import javax.ejb.Stateless;
 
 import js.dao.impl.TrainDAOImpl;
 import js.dto.TrainServiceDTO;
+import js.dto.UserDTO;
 import js.entity.Timetable;
 import js.entity.Trains;
 import js.entity.Users;
@@ -69,36 +69,36 @@ public class TrainService {
 	 * @param arrivalTime
 	 * @return <code>true</code> if a train is successfully added
 	 * @throws DataAccessException
+	 * @throws InvalidInputException
 	 */
 	public Boolean addTrain(int number, String name, int capacity,
 			String departureStationName, String arrivalStationName,
-			Date departureTime, Date arrivalTime) throws DataAccessException {
+			Date departureTime, Date arrivalTime) throws DataAccessException,
+			InvalidInputException {
 		Trains train = new Trains(number, name, capacity);
 		return trainDAOImpl.addTrain(train, departureStationName,
 				arrivalStationName, departureTime, arrivalTime);
 	}
 
 	/**
-	 * @param name
+	 * @param trainNumber
+	 * @param date
 	 * @return Map [login - name, surname, birthdate, email, type, status]
 	 * @throws DataAccessException
 	 * @throws InvalidInputException
 	 */
-	public Map<String, List<?>> getUsersByTrain(String name)
+	public Map<String, UserDTO> getUsersByTrain(Integer trainNumber, Date date)
 			throws DataAccessException, InvalidInputException {
-		List<Users> users = trainDAOImpl.getUsersByTrain(name);
-		Map<String, List<?>> result = new HashMap<String, List<?>>();
+		List<Users> users = trainDAOImpl.getUsersByTrain(trainNumber, date);
+		Map<String, UserDTO> result = new HashMap<String, UserDTO>();
 		Iterator<Users> iter = users.iterator();
 		while (iter.hasNext()) {
 			Users user = iter.next();
-			List<Object> list = new ArrayList<Object>();
-			list.add(user.getName());
-			list.add(user.getSurname());
-			list.add(user.getBirthdate());
-			list.add(user.getEmail());
-			list.add(user.getUserType());
-			list.add(user.getStatus());
-			result.put(user.getLogin(), list);
+			result.put(
+					user.getLogin(),
+					new UserDTO(user.getName(), user.getSurname(), user
+							.getBirthdate(), user.getEmail(), user
+							.getUserType(), user.getStatus()));
 		}
 		return result;
 	}

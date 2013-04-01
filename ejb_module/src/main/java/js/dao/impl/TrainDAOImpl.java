@@ -51,7 +51,34 @@ public class TrainDAOImpl implements TrainDAO {
 	@Override
 	public Boolean addTrain(Trains train, String departureStationName,
 			String arrivalStationName, Date departureTime, Date arrivalTime)
-			throws DataAccessException {
+			throws DataAccessException, InvalidInputException {
+		Stations departureStation = null;
+		Stations arrivalStation = null;
+		try {
+			HibernateUtil.beginTransaction();
+			departureStation = (Stations) HibernateUtil.getSession()
+					.createCriteria(Stations.class)
+					.add(Restrictions.eq("name", departureStationName))
+					.uniqueResult();
+			if (departureStation == null) {
+				throw new InvalidInputException("Station "
+						+ departureStationName + " does not exist");
+			}
+			arrivalStation = (Stations) HibernateUtil.getSession()
+					.createCriteria(Stations.class)
+					.add(Restrictions.eq("name", arrivalStationName))
+					.uniqueResult();
+			if (arrivalStation == null) {
+				throw new InvalidInputException("Station " + arrivalStationName
+						+ " does not exist");
+			}
+			HibernateUtil.commitTransaction();
+		} catch (HibernateException e) {
+			HibernateUtil.rollbackTransaction();
+			throw new DataAccessException(e.getLocalizedMessage());
+		} finally {
+			HibernateUtil.closeSession();
+		}
 		try {
 			HibernateUtil.beginTransaction();
 			HibernateUtil.getSession().saveOrUpdate("Trains", train);
@@ -64,14 +91,6 @@ public class TrainDAOImpl implements TrainDAO {
 		}
 		try {
 			HibernateUtil.beginTransaction();
-			Stations departureStation = (Stations) HibernateUtil.getSession()
-					.createCriteria(Stations.class)
-					.add(Restrictions.eq("name", departureStationName))
-					.uniqueResult();
-			Stations arrivalStation = (Stations) HibernateUtil.getSession()
-					.createCriteria(Stations.class)
-					.add(Restrictions.eq("name", arrivalStationName))
-					.uniqueResult();
 			Timetable timetable = new Timetable(arrivalStation,
 					departureStation, train, departureTime, arrivalTime);
 			HibernateUtil.getSession().saveOrUpdate("Timetable", timetable);
@@ -86,25 +105,30 @@ public class TrainDAOImpl implements TrainDAO {
 	}
 
 	@Override
-	public List<Users> getUsersByTrain(String name) throws DataAccessException,
-			InvalidInputException {
+	public List<Users> getUsersByTrain(Integer trainNumber, Date date)
+			throws DataAccessException, InvalidInputException {
 		List<Users> users = new ArrayList<Users>();
 		try {
 			HibernateUtil.beginTransaction();
 			Trains train = (Trains) HibernateUtil.getSession()
 					.createCriteria(Trains.class)
-					.add(Restrictions.eq("name", name)).uniqueResult();
+					.add(Restrictions.eq("number", trainNumber)).uniqueResult();
 			if (train == null) {
-				throw new InvalidInputException("Train " + name
+				throw new InvalidInputException("Train #" + trainNumber
 						+ " does not exist");
 			}
 			Timetable timetable = (Timetable) HibernateUtil.getSession()
 					.createCriteria(Timetable.class)
 					.add(Restrictions.eq("trains", train)).uniqueResult();
+			if (timetable == null) {
+				throw new InvalidInputException("No information for train #"
+						+ trainNumber);
+			}
 			@SuppressWarnings("unchecked")
 			List<Tickets> tickets = (List<Tickets>) HibernateUtil.getSession()
 					.createCriteria(Tickets.class)
-					.add(Restrictions.eq("timetable", timetable)).list();
+					.add(Restrictions.eq("timetable", timetable))
+					.add(Restrictions.eq("date", date)).list();
 			Iterator<Tickets> ticketIterator = tickets.iterator();
 			while (ticketIterator.hasNext()) {
 				Tickets ticket = ticketIterator.next();

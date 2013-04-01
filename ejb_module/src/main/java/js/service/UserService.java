@@ -1,6 +1,5 @@
 package js.service;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -11,6 +10,8 @@ import java.util.Set;
 import javax.ejb.Stateless;
 
 import js.dao.impl.UserDAOImpl;
+import js.dto.TicketDTO;
+import js.dto.UserDTO;
 import js.entity.Tickets;
 import js.entity.Timetable;
 import js.entity.Trains;
@@ -61,20 +62,17 @@ public class UserService {
 	 * @return Map [login - name, surname, birthdate, email, type, status]
 	 * @throws DataAccessException
 	 */
-	public Map<String, List<?>> getAllUsers() throws DataAccessException {
+	public Map<String, UserDTO> getAllUsers() throws DataAccessException {
 		List<Users> users = userDAOImpl.getAllUsers();
-		Map<String, List<?>> result = new HashMap<String, List<?>>();
+		Map<String, UserDTO> result = new HashMap<String, UserDTO>();
 		Iterator<Users> iter = users.iterator();
 		while (iter.hasNext()) {
 			Users user = iter.next();
-			List<Object> list = new ArrayList<Object>();
-			list.add(user.getName());
-			list.add(user.getSurname());
-			list.add(user.getBirthdate());
-			list.add(user.getEmail());
-			list.add(user.getUserType());
-			list.add(user.getStatus());
-			result.put(user.getLogin(), list);
+			result.put(
+					user.getLogin(),
+					new UserDTO(user.getName(), user.getSurname(), user
+							.getBirthdate(), user.getEmail(), user
+							.getUserType(), user.getStatus()));
 		}
 		return result;
 	}
@@ -85,26 +83,22 @@ public class UserService {
 	 *         arrival station, date, departure time, arrival time]
 	 * @throws DataAccessException
 	 */
-	public Map<Long, List<?>> getTicketsByUser(String userName)
+	public Map<Long, TicketDTO> getTicketsByUser(String userName)
 			throws DataAccessException {
 		Users user = new Users();
 		user.setLogin(userName);
 		Set<Tickets> tickets = userDAOImpl.getTicketsByUser(user);
-		Map<Long, List<?>> result = new HashMap<Long, List<?>>();
+		Map<Long, TicketDTO> result = new HashMap<Long, TicketDTO>();
 		Iterator<Tickets> iter = tickets.iterator();
 		while (iter.hasNext()) {
 			Tickets ticket = iter.next();
 			Timetable timetable = ticket.getTimetable();
 			Trains train = timetable.getTrains();
-			List<Object> list = new ArrayList<Object>();
-			list.add(train.getNumber());
-			list.add(train.getName());
-			list.add(timetable.getStationsByDepartureStationId().getName());
-			list.add(timetable.getStationsByArrivalStationId().getName());
-			list.add(ticket.getDate());
-			list.add(timetable.getDepartureTime());
-			list.add(timetable.getArrivalTime());
-			result.put(ticket.getId(), list);
+			result.put(ticket.getId(), new TicketDTO(ticket.getDate(),
+					timetable.getStationsByDepartureStationId().getName(),
+					timetable.getStationsByArrivalStationId().getName(),
+					timetable.getDepartureTime(), timetable.getArrivalTime(),
+					train.getNumber(), train.getName()));
 		}
 		return result;
 	}

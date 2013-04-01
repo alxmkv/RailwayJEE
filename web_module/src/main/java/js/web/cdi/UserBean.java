@@ -1,10 +1,17 @@
 package js.web.cdi;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
+import javax.faces.application.FacesMessage.Severity;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 
@@ -12,10 +19,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import js.dao.HibernateUtil;
+import js.dto.TicketDTO;
 import js.exception.DataAccessException;
 import js.exception.UserRegistrationFailedException;
 import js.service.UserService;
+import js.web.dto.Ticket;
 import js.web.dto.User;
+import js.web.dto.UserDTO;
 
 /**
  * http://localhost:8080/web_module/index.xhtml User bean is available for one
@@ -34,6 +44,8 @@ public class UserBean implements Serializable {
 	@EJB
 	private UserService userService;
 
+	private List<Ticket> ticketList;
+	private List<UserDTO> userList;
 	private User user = new User();
 
 	public String authenticateUser() {
@@ -48,21 +60,17 @@ public class UserBean implements Serializable {
 						.getSessionMap().put("type", new Integer(userType));
 				return "main";
 			} else {
-				showMessage("Incorrect login or password");
+				showDetailedMessage(FacesMessage.SEVERITY_ERROR,
+						"Incorrect login or password", "");
 			}
+			System.out.println("User type: " + userType);
 		} catch (DataAccessException e) {
+			showDetailedMessage(FacesMessage.SEVERITY_ERROR,
+					"Incorrect login or password", "");
 			logger.error(e.getLocalizedMessage());
-			showMessage("Incorrect login or password");
 		}
 		return "index";
 	}
-
-	// @Test
-	// public void authenticateUserTest() throws DataAccessException {
-	// HibernateUtil.init();
-	// Assert.assertEquals(true,
-	// new UserService().authenticateUser("test", "test"));
-	// }
 
 	public String registerUser() {
 		HibernateUtil.init();
@@ -71,24 +79,97 @@ public class UserBean implements Serializable {
 					user.getEmail(), user.getName(), user.getSurname(),
 					user.getBirthdate())) {
 				FacesContext.getCurrentInstance().getExternalContext()
-						.getSessionMap().put(user.getLogin(), new Integer(2));
+						.getSessionMap().put("login", user.getLogin());
+				FacesContext.getCurrentInstance().getExternalContext()
+						.getSessionMap().put("type", new Integer(2));
 				return "main";
 			} else {
-				showMessage("Registration failed. Please, try again.");
+				showDetailedMessage(FacesMessage.SEVERITY_ERROR,
+						"Registration failed", "Please, try again");
 			}
 		} catch (UserRegistrationFailedException e) {
+			showDetailedMessage(FacesMessage.SEVERITY_ERROR,
+					e.getLocalizedMessage(), "");
 			logger.error(e.getLocalizedMessage());
-			showMessage(e.getLocalizedMessage());
 		} catch (DataAccessException e) {
+			showDetailedMessage(FacesMessage.SEVERITY_ERROR,
+					"Registration failed", "Please, try again");
 			logger.error(e.getLocalizedMessage());
-			showMessage("Registration failed. Please, try again.");
 		}
 		return "index";
 	}
 
-	private void showMessage(String message) {
+	public List<Ticket> getTicketList() {
+		ticketList = new ArrayList<Ticket>();
+		if (!FacesContext.getCurrentInstance().getExternalContext()
+				.getSessionMap().containsKey("login")) {
+			return ticketList;
+		}
+		HibernateUtil.init();
+		try {
+			Map<Long, TicketDTO> tickets = userService
+					.getTicketsByUser((String) FacesContext
+							.getCurrentInstance().getExternalContext()
+							.getSessionMap().get("login"));
+			SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			for (Long id : tickets.keySet()) {
+				TicketDTO ticketDTO = tickets.get(id);
+				ticketList.add(new Ticket(
+						dateFormat.format(ticketDTO.getDate()), ticketDTO
+								.getDepartureStation(), ticketDTO
+								.getArrivalStation(), timeFormat
+								.format(ticketDTO.getDepartureTime()),
+						timeFormat.format(ticketDTO.getArrivalTime()),
+						ticketDTO.getTrainNumber().toString(), ticketDTO
+								.getTrainName(), Long.toString(id)));
+			}
+		} catch (DataAccessException e) {
+			showDetailedMessage(FacesMessage.SEVERITY_ERROR,
+					"Could not get list of tickets", "");
+			logger.error(e.getLocalizedMessage());
+		}
+		Collections.sort(ticketList);
+		return ticketList;
+	}
+
+	public List<UserDTO> getUserList() {
+		userList = new ArrayList<UserDTO>();
+		if (!FacesContext.getCurrentInstance().getExternalContext()
+				.getSessionMap().containsKey("login")) {
+			return userList;
+		}
+		HibernateUtil.init();
+		try {
+			Map<String, js.dto.UserDTO> users = userService.getAllUsers();
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			for (String login : users.keySet()) {
+				js.dto.UserDTO user = users.get(login);
+				String userType = (user.getUserType() == 1) ? "admin"
+						: "passenger";
+				userList.add(new UserDTO(login, user.getEmail(),
+						user.getName(), user.getSurname(), dateFormat
+								.format(user.getBirthdate()), userType));
+			}
+		} catch (DataAccessException e) {
+			showDetailedMessage(FacesMessage.SEVERITY_ERROR,
+					"Could not get list of users", "");
+			logger.error(e.getLocalizedMessage());
+		}
+		Collections.sort(userList);
+		return userList;
+	}
+
+	private void showDetailedMessage(Severity severity, String summary,
+			String detail) {
+		Iterator<FacesMessage> iter = FacesContext.getCurrentInstance()
+				.getMessages();
+		while (iter.hasNext()) {
+			iter.next();
+			iter.remove();
+		}
 		FacesContext.getCurrentInstance().addMessage(null,
-				new FacesMessage(message));
+				new FacesMessage(severity, summary, detail));
 	}
 
 	public User getUser() {

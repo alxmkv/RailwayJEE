@@ -53,12 +53,16 @@ public class TimetableServiceBean implements Serializable {
 	private List<Timetable> timetableList;
 
 	public List<Timetable> getTimetableList() {
+		timetableList = new ArrayList<Timetable>();
+		if (!FacesContext.getCurrentInstance().getExternalContext()
+				.getSessionMap().containsKey("login")) {
+			return timetableList;
+		}
 		if (timetableDTO.getDepartureStation() != null
 				&& timetableDTO.getArrivalStation() != null
 				&& timetableDTO.getDate() != null
 				&& timetableDTO.getTimeFrom() != null
 				&& timetableDTO.getTimeTo() != null) {
-			timetableList = new ArrayList<Timetable>();
 			HibernateUtil.init();
 			try {
 				SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
@@ -90,6 +94,7 @@ public class TimetableServiceBean implements Serializable {
 							.getTimetableFromAToBInTimeInterval(
 									timetableDTO.getDepartureStation(),
 									timetableDTO.getArrivalStation(),
+									timetableDTO.getDate(),
 									timetableDTO.getTimeFrom(),
 									timetableDTO.getTimeTo());
 					for (Integer trainNumber : timetables.keySet()) {
@@ -209,51 +214,5 @@ public class TimetableServiceBean implements Serializable {
 	}
 	// @PostConstruct
 	// public void init() {
-	// if (timetableList == null) {
-	// timetableList = new ArrayList<Timetable>();
-	// HibernateUtil.init();
-	// try {
-	// // [train number - train name, arrival station,
-	// // departure time,
-	// // arrival time, capacity]
-	// Map<String, TimetableServiceDTO> timetables = timetableService
-	// .getTimetableByStation("Saint-Petersburg");
-	// for (String trainNumberString : timetables.keySet()) {
-	// SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm");
-	// timetableList.add(new Timetable(trainNumberString,
-	// timetables.get(trainNumberString).getTrainName(),
-	// timetables.get(trainNumberString)
-	// .getArrivalStation(), timeFormat
-	// .format(timetables.get(trainNumberString)
-	// .getDepartureTime()), timeFormat
-	// .format(timetables.get(trainNumberString)
-	// .getArrivalTime()), timetables
-	// .get(trainNumberString).getTicketsLeft()
-	// .toString()));
-	// System.out
-	// .println(timetableList.get(0).getArrivalStation());
 	// }
-	// } catch (DataAccessException e) {
-	// logger.error(e.getLocalizedMessage());
-	// showMessage("Could not get timetable for "
-	// + timetableDTO.getDepartureStation());
-	// } catch (InvalidInputException e) {
-	// showMessage(e.getLocalizedMessage());
-	// }
-	// }
-	// }
-	// @PostConstruct
-	// public void init() {
-	// }
-	// Set<String> users = FacesContext.getCurrentInstance()
-	// .getExternalContext().getSessionMap().keySet();
-	// String currentLogin = "";
-	// for (String login : users) {
-	// currentLogin = login;
-	// System.out.println("login = " + currentLogin);
-	// FacesContext.getCurrentInstance().getExternalContext()
-	// .getSessionMap().put(login, timetableList);
-	// }
-	// return (List<Timetable>) FacesContext.getCurrentInstance()
-	// .getExternalContext().getSessionMap().get(currentLogin);
 }

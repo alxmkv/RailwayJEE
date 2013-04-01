@@ -2,13 +2,16 @@ package js;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.List;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
 import js.dao.HibernateUtil;
+import js.dto.TicketDTO;
 import js.dto.TimetableServiceDTO;
 import js.dto.TrainServiceDTO;
+import js.dto.UserDTO;
 import js.exception.DataAccessException;
 import js.exception.InvalidInputException;
 import js.exception.TicketOrderFailedException;
@@ -49,9 +52,11 @@ public class HibernateTest {
 	@Test
 	public void registerUserTest() throws UserRegistrationFailedException,
 			ParseException, DataAccessException {
+		System.out.println(new SimpleDateFormat("yyyy-MM-dd")
+				.parse("1980-19-09"));
 		Assert.assertEquals(true, userService.registerUser("test", "test",
 				"test@test.com", "TestName", "TestSurname",
-				new SimpleDateFormat("yyyy-MM-dd").parse("1980-19-09")));
+				new SimpleDateFormat("yyyy-MM-dd").parse("1981-07-09")));
 	}
 
 	@Test(expected = UserRegistrationFailedException.class)
@@ -70,14 +75,14 @@ public class HibernateTest {
 
 	@Test
 	public void getAllUsersTest() throws DataAccessException {
-		Map<String, List<?>> users = userService.getAllUsers();
+		Map<String, UserDTO> users = userService.getAllUsers();
 		Assert.assertEquals(true, users.keySet().iterator().hasNext());
 	}
 
 	@Test
 	public void getTicketsByUserTest() throws ParseException,
 			DataAccessException {
-		Map<Long, List<?>> tickets = userService.getTicketsByUser("alexm");
+		Map<Long, TicketDTO> tickets = userService.getTicketsByUser("test");
 		Set<Long> ticketNumbers = tickets.keySet();
 		Assert.assertEquals(false, ticketNumbers.isEmpty());
 		System.out
@@ -85,13 +90,13 @@ public class HibernateTest {
 						+ "destination\tdate\tdeparture time\tarrival time");
 		for (Long ticketNumber : ticketNumbers) {
 			System.out.println(ticketNumber.toString() + "\t"
-					+ tickets.get(ticketNumber).get(0) + "\t"
-					+ tickets.get(ticketNumber).get(1) + "\t"
-					+ tickets.get(ticketNumber).get(2) + "\t"
-					+ tickets.get(ticketNumber).get(3) + "\t"
-					+ tickets.get(ticketNumber).get(4) + "\t"
-					+ tickets.get(ticketNumber).get(5) + "\t"
-					+ tickets.get(ticketNumber).get(6));
+					+ tickets.get(ticketNumber).getTrainNumber() + "\t"
+					+ tickets.get(ticketNumber).getTrainName() + "\t"
+					+ tickets.get(ticketNumber).getDepartureStation() + "\t"
+					+ tickets.get(ticketNumber).getArrivalStation() + "\t"
+					+ tickets.get(ticketNumber).getDate() + "\t"
+					+ tickets.get(ticketNumber).getDepartureTime() + "\t"
+					+ tickets.get(ticketNumber).getArrivalTime());
 		}
 	}
 
@@ -123,20 +128,21 @@ public class HibernateTest {
 	@Test
 	public void getTimetableFromAToBInTimeIntervalTest() throws ParseException,
 			DataAccessException, InvalidInputException {
+		Date date = new Date();
 		SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
 		Map<Integer, TimetableServiceDTO> timetable = timetableService
 				.getTimetableFromAToBInTimeInterval("Saint-Petersburg",
-						"Moscow", timeFormat.parse("23:00"),
+						"Moscow", date, timeFormat.parse("23:00"),
 						timeFormat.parse("23:59"));
 		Set<Integer> trainNumbers = timetable.keySet();
 		Assert.assertEquals(false, trainNumbers.isEmpty());
-		System.out.println("train number\ttrain name\t"
+		System.out.println("train number\ttrain name\tdate\t"
 				+ "departure time\tarrival time\ttickets left");
 		for (Integer trainNumber : trainNumbers) {
 			System.out.println(trainNumber.toString() + "\t"
-					+ timetable.get(trainNumber).getTrainName() + "\t"
-					+ timetable.get(trainNumber).getDepartureTime() + "\t"
-					+ timetable.get(trainNumber).getArrivalTime() + "\t"
+					+ timetable.get(trainNumber).getTrainName() + "\t" + date
+					+ "\t" + timetable.get(trainNumber).getDepartureTime()
+					+ "\t" + timetable.get(trainNumber).getArrivalTime() + "\t"
 					+ timetable.get(trainNumber).getTicketsLeft());
 		}
 	}
@@ -146,7 +152,8 @@ public class HibernateTest {
 			throws ParseException, DataAccessException, InvalidInputException {
 		SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
 		timetableService.getTimetableFromAToBInTimeInterval("Saint-Petersburg",
-				"Moscow", timeFormat.parse("23:59"), timeFormat.parse("23:00"));
+				"Moscow", new Date(), timeFormat.parse("23:59"),
+				timeFormat.parse("23:00"));
 	}
 
 	@Test
@@ -168,15 +175,24 @@ public class HibernateTest {
 	}
 
 	@Test(expected = DataAccessException.class)
-	public void addTrainTestWithException() throws DataAccessException,
-			ParseException {
+	public void addTrainTestWithDataAccessException()
+			throws DataAccessException, ParseException, InvalidInputException {
 		SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
 		trainService.addTrain(1, "Existing train", 400, "Saint-Petersburg",
 				"Moscow", timeFormat.parse("23:00"), timeFormat.parse("8:00"));
 	}
 
+	@Test(expected = InvalidInputException.class)
+	public void addTrainTestWithInvalidInputException()
+			throws DataAccessException, ParseException, InvalidInputException {
+		SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
+		trainService.addTrain(2000, "Train", 400, "SPb", "Moscow",
+				timeFormat.parse("23:00"), timeFormat.parse("8:00"));
+	}
+
 	@Test
-	public void addTrainTest() throws DataAccessException, ParseException {
+	public void addTrainTest() throws DataAccessException, ParseException,
+			InvalidInputException {
 		SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
 		Assert.assertEquals(true, trainService.addTrain(200, "Eiffel Tower",
 				500, "Saint-Petersburg", "Paris", timeFormat.parse("23:00"),
@@ -185,38 +201,47 @@ public class HibernateTest {
 
 	@Test
 	public void getUsersByTrainTest() throws DataAccessException,
-			InvalidInputException {
-		Map<String, List<?>> users = trainService
-				.getUsersByTrain("Severnaya Palmira");
+			InvalidInputException, ParseException {
+		Map<String, UserDTO> users = trainService.getUsersByTrain(1,
+				new SimpleDateFormat("yyyy-MM-dd").parse("2013-04-01"));
 		Assert.assertEquals(false, users.isEmpty());
 		Set<String> userLogins = users.keySet();
 		System.out
 				.println("login\tname\tsurname\tbirthdate\temail\ttype\tstatus");
 		for (String login : userLogins) {
-			System.out
-					.println(login
-							+ "\t"
-							+ users.get(login).get(0)
-							+ "\t"
-							+ users.get(login).get(1)
-							+ "\t"
-							+ users.get(login).get(2)
-							+ "\t"
-							+ users.get(login).get(3)
-							+ "\t"
-							+ ((Byte) users.get(login).get(4) == Byte
-									.parseByte("1") ? "admin" : "passenger")
-							+ "\t"
-							+ ((Byte) users.get(login).get(5) == Byte
-									.parseByte("1") ? "registered"
-									: "logged in"));
+			System.out.println(login
+					+ "\t"
+					+ users.get(login).getName()
+					+ "\t"
+					+ users.get(login).getSurname()
+					+ "\t"
+					+ users.get(login).getBirthdate()
+					+ "\t"
+					+ users.get(login).getEmail()
+					+ "\t"
+					+ ((Byte) users.get(login).getUserType() == Byte
+							.parseByte("1") ? "admin" : "passenger")
+					+ "\t"
+					+ ((Byte) users.get(login).getStatus() == Byte
+							.parseByte("1") ? "registered" : "logged in"));
 		}
 	}
 
 	@Test(expected = InvalidInputException.class)
 	public void getUsersByTrainTestWithException() throws DataAccessException,
 			InvalidInputException {
-		trainService.getUsersByTrain("Unexisting_train");
+		trainService.getUsersByTrain(0, new Date());
+	}
+
+	@Test
+	public void getAllStationsTest() throws DataAccessException {
+		Set<String> stations = stationService.getAllStations();
+		Assert.assertEquals(true, stations.size() > 0);
+		Iterator<String> iter = stations.iterator();
+		while (iter.hasNext()) {
+			String station = iter.next();
+			System.out.println(station);
+		}
 	}
 
 	@Test

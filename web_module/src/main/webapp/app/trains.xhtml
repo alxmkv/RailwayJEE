@@ -6,7 +6,7 @@
 	xmlns:p="http://primefaces.org/ui">
 
 <h:head>
-	<title>Welcome</title>
+	<title>Railway Application - Trains</title>
 	<link type="text/css" rel="stylesheet" href="styles/styles.css"></link>
 </h:head>
 
@@ -15,10 +15,10 @@
 		<div
 			style="font-size: 36px; line-height: 60px; background-color: navy; color: white;">
 			<h:form>Railway Application
-				<p:commandButton value="Log out" action="#{logoutBean.logout}"
+				<p:commandLink value="Log out" action="#{logoutBean.logout}"
 					styleClass="jquery-button"
-					style="font-size: 14px; position:relative;left:220px;bottom:10px;">
-				</p:commandButton>
+					style="font-size: 14px; position: relative; left: 220px; bottom: 10px; color: white;">
+				</p:commandLink>
 			</h:form>
 		</div>
 	</div>
@@ -26,29 +26,29 @@
 	<div id="content">
 		<div class="form">
 			<h:form>
-				<p:tabMenu activeIndex="1">
+				<p:tabMenu activeIndex="2">
 					<p:menuitem value="Timetable" url="/app/main.jsf"
 						icon="ui-icon-search" />
-					<p:menuitem value="Trains" url="/app/trains.jsf"
-						icon="ui-icon-search" rendered="#{logoutBean.isAdmin()}" />
-					<p:menuitem value="Add train" url="/app/addtrain.jsf"
-						icon="ui-icon-wrench" rendered="#{logoutBean.isAdmin()}" />
-					<p:menuitem value="Stations" url="/app/stations.jsf"
-						icon="ui-icon-search" rendered="#{logoutBean.isAdmin()}" />
-					<p:menuitem value="Add station" url="/app/addstation.jsf"
-						icon="ui-icon-wrench" rendered="#{logoutBean.isAdmin()}" />
-					<p:menuitem value="Users" url="/app/users.jsf"
-						icon="ui-icon-person" rendered="#{logoutBean.isAdmin()}" />
-					<p:menuitem value="Passengers by train" url="/app/passengers.jsf"
-						icon="ui-icon-person" rendered="#{logoutBean.isAdmin()}" />
 					<p:menuitem value="Tickets" url="/app/tickets.jsf"
 						icon="ui-icon-document" />
+					<p:menuitem value="Trains" url="/app/trains.jsf"
+						icon="ui-icon-search" rendered="#{logoutBean.isAdmin()}" />
+					<p:menuitem value="Stations" url="/app/stations.jsf"
+						icon="ui-icon-search" rendered="#{logoutBean.isAdmin()}" />
+					<p:menuitem value="Users" url="/app/users.jsf"
+						icon="ui-icon-person" rendered="#{logoutBean.isAdmin()}" />
 				</p:tabMenu>
 			</h:form>
 
 			<h:form id="search-form">
-				<p:commandButton value="Update" styleClass="jquery-button"
-					update="messages,trains">
+				<p:commandButton value="Update" update="trains"
+					styleClass="jquery-button">
+				</p:commandButton>
+				<p:commandButton value="Passengers"
+					onclick="passengersDialog.show()" styleClass="jquery-button">
+				</p:commandButton>
+				<p:commandButton value="Add train" onclick="newTrainDialog.show()"
+					styleClass="jquery-button">
 				</p:commandButton>
 
 				<p:growl id="messages" showDetail="true" />
@@ -83,6 +83,122 @@
 						<h:outputText value="#{tt.capacity}" />
 					</p:column>
 				</p:dataTable>
+
+				<p></p>
+				<p:dataTable id="passengers" var="tt"
+					value="#{trainServiceBean.passengerList}" paginator="true"
+					rows="20" lazy="false"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="10,20,50,100">
+					<f:facet name="header">Passengers
+					</f:facet>
+					<p:column headerText="Last name">
+						<h:outputText value="#{tt.surname}" />
+					</p:column>
+					<p:column headerText="Name">
+						<h:outputText value="#{tt.name}" />
+					</p:column>
+					<p:column headerText="Birth date">
+						<h:outputText value="#{tt.birthdate}" />
+					</p:column>
+					<p:column headerText="Email">
+						<h:outputText value="#{tt.email}" />
+					</p:column>
+					<p:column headerText="Login">
+						<h:outputText value="#{tt.login}" />
+					</p:column>
+					<p:column headerText="Type">
+						<h:outputText value="#{tt.userType}" />
+					</p:column>
+				</p:dataTable>
+
+				<h:form>
+					<p:confirmDialog id="passengerDlg"
+						message="Please, enter train number and date to get a list of passengers"
+						header="View passengers by train" severity="alert"
+						widgetVar="passengersDialog">
+						<h:panelGrid id="passengerDlgDisplay" columns="2" cellpadding="4"
+							style="margin:0 auto;">
+							<h:outputLabel for="passTrainNumber">Train number:</h:outputLabel>
+							<p:inputText id="passTrainNumber" label="Train Number"
+								value="#{trainServiceBean.trainNumber}" required="true"
+								requiredMessage="Please, enter train number" size="24">
+							</p:inputText>
+							<h:outputLabel for="date">Date:</h:outputLabel>
+							<p:calendar value="#{trainServiceBean.date}" pattern="yyyy-MM-dd"
+								id="date" label="Date" showButtonPanel="true"
+								mindate="2013-03-28" navigator="true" pages="2"
+								showOtherMonths="true" required="true"
+								requiredMessage="Please enter date in yyyy-MM-dd format"
+								size="24" />
+							<p:commandButton id="confirmViewPass" value="View passengers"
+								update=":search-form:passengers,:search-form:messages"
+								oncomplete="passengersDialog.hide()" />
+							<p:commandButton id="declineViewPass" value="Cancel"
+								onclick="passengersDialog.hide()" type="button" />
+						</h:panelGrid>
+					</p:confirmDialog>
+				</h:form>
+
+				<h:form>
+					<p:confirmDialog id="newTrainDlg" header="New train"
+						message="Please, enter train details" widgetVar="newTrainDialog">
+						<h:panelGrid id="newTrainDlgDisplay" columns="2" cellpadding="4"
+							style="margin:0 auto;">
+							<h:outputLabel for="trainNumber">Train number:</h:outputLabel>
+							<p:inputText id="trainNumber"
+								value="#{trainServiceBean.train.trainNumber}" required="true"
+								requiredMessage="Please, enter train number"
+								label="Train number" size="24">
+							</p:inputText>
+							<h:outputLabel for="trainName">Train name:</h:outputLabel>
+							<p:inputText id="trainName"
+								value="#{trainServiceBean.train.trainName}" required="true"
+								requiredMessage="Please, enter train name" label="Train name"
+								size="24">
+							</p:inputText>
+							<h:outputLabel for="departureStation">Departure station:</h:outputLabel>
+							<p:inputText id="departureStation"
+								value="#{trainServiceBean.train.departureStation}"
+								required="true"
+								requiredMessage="Please, enter station of departure"
+								label="Departure station" size="24">
+							</p:inputText>
+							<h:outputLabel for="arrivalStation">Arrival station:</h:outputLabel>
+							<p:inputText id="arrivalStation"
+								value="#{trainServiceBean.train.arrivalStation}" required="true"
+								requiredMessage="Please, enter station of arrival"
+								label="Arrival station" size="24">
+							</p:inputText>
+							<h:outputLabel for="departureTime">Departure time:</h:outputLabel>
+							<p:calendar id="departureTime"
+								value="#{trainServiceBean.train.departureTime}" pattern="HH:mm"
+								timeOnly="true" required="true"
+								requiredMessage="Please enter time of departure in HH:mm format"
+								label="Departure time" size="24" />
+							<h:outputLabel for="arrivalTime">Arrival time:</h:outputLabel>
+							<p:calendar id="arrivalTime"
+								value="#{trainServiceBean.train.arrivalTime}" pattern="HH:mm"
+								timeOnly="true" required="true"
+								requiredMessage="Please enter time of arrival in HH:mm format"
+								label="Arrival time" size="24" />
+							<h:outputLabel for="capacity">Capacity:</h:outputLabel>
+							<p:inputText id="capacity"
+								value="#{trainServiceBean.train.capacity}" required="true"
+								requiredMessage="Please, enter train capacity" label="Capacity"
+								size="24">
+							</p:inputText>
+							<p:commandButton id="confirm" value="Create"
+								update=":search-form:trains,:search-form:messages"
+								oncomplete="newTrainDialog.hide()"
+								actionListener="#{trainServiceBean.addTrain}"
+								styleClass="jquery-button" />
+							<p:commandButton id="decline" value="Cancel"
+								onclick="newTrainDialog.hide()" type="button"
+								styleClass="jquery-button" />
+						</h:panelGrid>
+					</p:confirmDialog>
+				</h:form>
 			</h:form>
 		</div>
 	</div>

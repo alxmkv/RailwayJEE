@@ -17,6 +17,7 @@ import js.entity.Timetable;
 import js.entity.Trains;
 import js.entity.Users;
 import js.exception.DataAccessException;
+import js.exception.InvalidInputException;
 import js.exception.UserRegistrationFailedException;
 
 /**
@@ -101,5 +102,10 @@ public class UserService {
 					train.getNumber(), train.getName()));
 		}
 		return result;
+	}
+
+	public Boolean setAccessRights(String login, Byte userType)
+			throws DataAccessException, InvalidInputException {
+		return userDAOImpl.setAccessRights(login, userType);
 	}
 }

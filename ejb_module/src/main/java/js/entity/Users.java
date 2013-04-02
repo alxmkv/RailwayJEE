@@ -23,7 +23,6 @@ import javax.persistence.UniqueConstraint;
 @Entity
 @Table(name = "users", uniqueConstraints = {
 		@UniqueConstraint(columnNames = "login"),
-		@UniqueConstraint(columnNames = "password"),
 		@UniqueConstraint(columnNames = "email") })
 public class Users implements java.io.Serializable {
 
@@ -102,7 +101,7 @@ public class Users implements java.io.Serializable {
 		this.login = login;
 	}
 
-	@Column(name = "password", unique = true, nullable = false, length = 32)
+	@Column(name = "password", nullable = false, length = 32)
 	public String getPassword() {
 		return this.password;
 	}

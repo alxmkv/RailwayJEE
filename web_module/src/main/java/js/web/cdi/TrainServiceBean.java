@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
@@ -20,6 +21,7 @@ import js.dao.HibernateUtil;
 import js.dto.TrainServiceDTO;
 import js.exception.DataAccessException;
 import js.exception.InvalidInputException;
+import js.service.StationService;
 import js.service.TrainService;
 import js.web.dto.Train;
 import js.web.dto.TrainDTO;
@@ -41,6 +43,8 @@ public class TrainServiceBean implements Serializable {
 
 	@EJB
 	private TrainService trainService;
+	@EJB
+	private StationService stationService;
 
 	private TrainDTO train = new TrainDTO();
 
@@ -48,6 +52,44 @@ public class TrainServiceBean implements Serializable {
 	private List<UserDTO> passengerList;
 	private String trainNumber;
 	private Date date;
+	private List<String> stationList;
+
+	public List<String> trainNumberAutoComplete(String query) {
+		List<String> results = new ArrayList<String>();
+		Iterator<Train> iter = trainList.iterator();
+		while (iter.hasNext()) {
+			Train train = iter.next();
+			String trainNumber = train.getTrainNumber();
+			if (trainNumber.startsWith(query)) {
+				results.add(trainNumber);
+			}
+		}
+		return results;
+	}
+
+	public List<String> stationAutoComplete(String query) {
+		if (stationList == null || stationList.isEmpty()) {
+			stationList = new ArrayList<String>();
+			try {
+				Set<String> stations = stationService.getAllStations();
+				Iterator<String> iter = stations.iterator();
+				while (iter.hasNext()) {
+					stationList.add(iter.next());
+				}
+			} catch (DataAccessException e) {
+				logger.error(e.getLocalizedMessage());
+			}
+		}
+		List<String> results = new ArrayList<String>();
+		Iterator<String> iter = stationList.iterator();
+		while (iter.hasNext()) {
+			String station = iter.next();
+			if (station.toLowerCase().startsWith(query)) {
+				results.add(station);
+			}
+		}
+		return results;
+	}
 
 	public List<Train> getTrainList() {
 		trainList = new ArrayList<Train>();
@@ -168,6 +210,10 @@ public class TrainServiceBean implements Serializable {
 
 	public TrainDTO getTrain() {
 		return train;
+	}
+
+	public void setTrain(TrainDTO train) {
+		this.train = train;
 	}
 
 	public String getTrainNumber() {

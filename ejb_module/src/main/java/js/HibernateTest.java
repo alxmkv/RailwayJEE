@@ -101,6 +101,13 @@ public class HibernateTest {
 	}
 
 	@Test
+	public void setAccessRights() throws NumberFormatException,
+			DataAccessException, InvalidInputException {
+		Assert.assertEquals(true,
+				userService.setAccessRights("test", Byte.valueOf("2")));
+	}
+
+	@Test
 	public void getTimetableByStationTest() throws DataAccessException,
 			InvalidInputException {
 		Map<String, TimetableServiceDTO> timetable = timetableService

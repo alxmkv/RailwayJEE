@@ -43,50 +43,50 @@
 			<h:form id="search-form">
 				<h:panelGrid id="search-form-panel" columns="3">
 					<h:outputLabel for="from">From:</h:outputLabel>
-					<p:inputText id="from" label="From"
+					<p:autoComplete id="from" label="From" forceSelection="true"
 						value="#{timetableServiceBean.timetableDTO.departureStation}"
+						completeMethod="#{timetableServiceBean.stationAutoComplete}"
 						required="true"
-						requiredMessage="Please enter station of departure">
-					</p:inputText>
+						requiredMessage="Please, enter station of departure" />
 					<p:message for="from" />
 
 					<h:outputLabel for="to">To:</h:outputLabel>
-					<p:inputText id="to" label="To"
+					<p:autoComplete id="to" label="To" forceSelection="true"
 						value="#{timetableServiceBean.timetableDTO.arrivalStation}"
-						requiredMessage="Please enter station of arrival" required="true">
-					</p:inputText>
+						completeMethod="#{timetableServiceBean.stationAutoComplete}"
+						required="true" requiredMessage="Please, enter station of arrival" />
 					<p:message for="to" />
 
 					<h:outputLabel for="date">Date:</h:outputLabel>
 					<p:calendar value="#{timetableServiceBean.timetableDTO.date}"
 						pattern="yyyy-MM-dd" id="date" label="Date" showButtonPanel="true"
-						mindate="2013-03-28" navigator="true" pages="2"
+						mindate="2013-04-02" navigator="true" pages="2"
 						showOtherMonths="true" required="true"
-						requiredMessage="Please enter date in yyyy-MM-dd format" />
+						requiredMessage="Please, enter date in yyyy-MM-dd format" />
 					<p:message for="date" />
 
 					<h:outputLabel for="fromTime">Time from:</h:outputLabel>
 					<p:calendar id="fromTime" label="FromTime"
 						value="#{timetableServiceBean.timetableDTO.timeFrom}"
 						pattern="HH:mm" timeOnly="true" required="true"
-						requiredMessage="Please enter time in HH:mm format" />
+						requiredMessage="Please, enter time in HH:mm format" />
 					<p:message for="fromTime" />
 
 					<h:outputLabel for="toTime">Time to:</h:outputLabel>
 					<p:calendar id="toTime" label="ToTime"
 						value="#{timetableServiceBean.timetableDTO.timeTo}"
 						pattern="HH:mm" timeOnly="true" required="true"
-						requiredMessage="Please enter time in HH:mm format" />
+						requiredMessage="Please, enter time in HH:mm format" />
 					<p:message for="toTime" />
 
 					<h:panelGroup />
 					<p:commandButton value="Search" styleClass="jquery-button"
 						update="search-form-panel,timetables">
 					</p:commandButton>
-					<h:messages globalOnly="true" layout="table" />
+					<p:messages globalOnly="true" layout="table" />
 				</h:panelGrid>
 
-				<p:growl id="messages" showDetail="true" />
+				<p:growl sticky="true" id="messages" showDetail="true" />
 
 				<p></p>
 				<p:dataTable id="timetables" var="tt"
@@ -151,12 +151,14 @@
 						<h:outputText
 							value="#{timetableServiceBean.selectedTimetableRow.trainName}"
 							style="font-weight:bold" />
+						<p:commandButton id="confirm" value="Buy ticket"
+							update="timetables,messages" oncomplete="confirmation.hide()"
+							actionListener="#{timetableServiceBean.buyTicket}"
+							styleClass="jquery-button" />
+						<p:commandButton id="decline" value="Cancel"
+							onclick="confirmation.hide()" type="button"
+							styleClass="jquery-button" />
 					</h:panelGrid>
-					<p:commandButton id="confirm" value="Buy ticket"
-						update="timetables,messages" oncomplete="confirmation.hide()"
-						actionListener="#{timetableServiceBean.buyTicket}" />
-					<p:commandButton id="decline" value="Cancel"
-						onclick="confirmation.hide()" type="button" />
 				</p:confirmDialog>
 			</h:form>
 		</div>

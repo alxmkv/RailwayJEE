@@ -51,8 +51,6 @@
 					styleClass="jquery-button">
 				</p:commandButton>
 
-				<p:growl id="messages" showDetail="true" />
-
 				<p></p>
 				<p:dataTable id="trains" var="tt"
 					value="#{trainServiceBean.trainList}" paginator="true" rows="20"
@@ -111,94 +109,99 @@
 						<h:outputText value="#{tt.userType}" />
 					</p:column>
 				</p:dataTable>
+			</h:form>
 
-				<h:form>
-					<p:confirmDialog id="passengerDlg"
-						message="Please, enter train number and date to get a list of passengers"
-						header="View passengers by train" severity="alert"
-						widgetVar="passengersDialog">
-						<h:panelGrid id="passengerDlgDisplay" columns="2" cellpadding="4"
-							style="margin:0 auto;">
-							<h:outputLabel for="passTrainNumber">Train number:</h:outputLabel>
-							<p:inputText id="passTrainNumber" label="Train Number"
-								value="#{trainServiceBean.trainNumber}" required="true"
-								requiredMessage="Please, enter train number" size="24">
-							</p:inputText>
-							<h:outputLabel for="date">Date:</h:outputLabel>
-							<p:calendar value="#{trainServiceBean.date}" pattern="yyyy-MM-dd"
-								id="date" label="Date" showButtonPanel="true"
-								mindate="2013-03-28" navigator="true" pages="2"
-								showOtherMonths="true" required="true"
-								requiredMessage="Please enter date in yyyy-MM-dd format"
-								size="24" />
-							<p:commandButton id="confirmViewPass" value="View passengers"
-								update=":search-form:passengers,:search-form:messages"
-								oncomplete="passengersDialog.hide()" />
-							<p:commandButton id="declineViewPass" value="Cancel"
-								onclick="passengersDialog.hide()" type="button" />
-						</h:panelGrid>
-					</p:confirmDialog>
-				</h:form>
+			<h:form id="passengersDialogForm">
+				<p:growl id="passengersDialogMessages" showDetail="true" />
+				<p:confirmDialog id="passengerDlg"
+					message="Please, enter train number and date to get a list of passengers"
+					header="View passengers by train" severity="alert"
+					widgetVar="passengersDialog">
+					<h:panelGrid id="passengerDlgDisplay" columns="2" cellpadding="4"
+						style="margin:0 auto;">
+						<h:outputLabel for="passTrainNumber">Train number:</h:outputLabel>
+						<p:autoComplete id="passTrainNumber" forceSelection="true"
+							value="#{trainServiceBean.trainNumber}"
+							completeMethod="#{trainServiceBean.trainNumberAutoComplete}"
+							required="true" requiredMessage="Please, enter train number"
+							label="Train number" size="24" />
+						<h:outputLabel for="date">Date:</h:outputLabel>
+						<p:calendar value="#{trainServiceBean.date}" pattern="yyyy-MM-dd"
+							id="date" label="Date" showButtonPanel="true"
+							mindate="2013-04-02" navigator="true" pages="2"
+							showOtherMonths="true" required="true"
+							requiredMessage="Please, enter date in yyyy-MM-dd format"
+							size="24" />
+						<p:commandButton id="confirmViewPass" value="View passengers"
+							update=":search-form:passengers,passengersDialogMessages"
+							oncomplete="passengersDialog.hide()" styleClass="jquery-button" />
+						<p:commandButton id="declineViewPass" value="Cancel"
+							onclick="passengersDialog.hide()" type="button"
+							styleClass="jquery-button" />
+					</h:panelGrid>
+				</p:confirmDialog>
+			</h:form>
 
-				<h:form>
-					<p:confirmDialog id="newTrainDlg" header="New train"
-						message="Please, enter train details" widgetVar="newTrainDialog">
-						<h:panelGrid id="newTrainDlgDisplay" columns="2" cellpadding="4"
-							style="margin:0 auto;">
-							<h:outputLabel for="trainNumber">Train number:</h:outputLabel>
-							<p:inputText id="trainNumber"
-								value="#{trainServiceBean.train.trainNumber}" required="true"
-								requiredMessage="Please, enter train number"
-								label="Train number" size="24">
-							</p:inputText>
-							<h:outputLabel for="trainName">Train name:</h:outputLabel>
-							<p:inputText id="trainName"
-								value="#{trainServiceBean.train.trainName}" required="true"
-								requiredMessage="Please, enter train name" label="Train name"
-								size="24">
-							</p:inputText>
-							<h:outputLabel for="departureStation">Departure station:</h:outputLabel>
-							<p:inputText id="departureStation"
-								value="#{trainServiceBean.train.departureStation}"
-								required="true"
-								requiredMessage="Please, enter station of departure"
-								label="Departure station" size="24">
-							</p:inputText>
-							<h:outputLabel for="arrivalStation">Arrival station:</h:outputLabel>
-							<p:inputText id="arrivalStation"
-								value="#{trainServiceBean.train.arrivalStation}" required="true"
-								requiredMessage="Please, enter station of arrival"
-								label="Arrival station" size="24">
-							</p:inputText>
-							<h:outputLabel for="departureTime">Departure time:</h:outputLabel>
-							<p:calendar id="departureTime"
-								value="#{trainServiceBean.train.departureTime}" pattern="HH:mm"
-								timeOnly="true" required="true"
-								requiredMessage="Please enter time of departure in HH:mm format"
-								label="Departure time" size="24" />
-							<h:outputLabel for="arrivalTime">Arrival time:</h:outputLabel>
-							<p:calendar id="arrivalTime"
-								value="#{trainServiceBean.train.arrivalTime}" pattern="HH:mm"
-								timeOnly="true" required="true"
-								requiredMessage="Please enter time of arrival in HH:mm format"
-								label="Arrival time" size="24" />
-							<h:outputLabel for="capacity">Capacity:</h:outputLabel>
-							<p:inputText id="capacity"
-								value="#{trainServiceBean.train.capacity}" required="true"
-								requiredMessage="Please, enter train capacity" label="Capacity"
-								size="24">
-							</p:inputText>
-							<p:commandButton id="confirm" value="Create"
-								update=":search-form:trains,:search-form:messages"
-								oncomplete="newTrainDialog.hide()"
-								actionListener="#{trainServiceBean.addTrain}"
-								styleClass="jquery-button" />
-							<p:commandButton id="decline" value="Cancel"
-								onclick="newTrainDialog.hide()" type="button"
-								styleClass="jquery-button" />
-						</h:panelGrid>
-					</p:confirmDialog>
-				</h:form>
+			<h:form id="newTrainDialogForm">
+				<p:growl id="newTrainDialogMessages" showDetail="true" />
+				<p:confirmDialog id="newTrainDlg" header="New train"
+					message="Please, enter train details" widgetVar="newTrainDialog">
+					<h:panelGrid id="newTrainDlgDisplay" columns="2" cellpadding="4"
+						style="margin:0 auto;">
+						<h:outputLabel for="trainNumber">Train number:</h:outputLabel>
+						<p:inputText id="trainNumber"
+							value="#{trainServiceBean.train.trainNumber}" required="true"
+							requiredMessage="Please, enter train number" label="Train number"
+							size="24">
+						</p:inputText>
+						<h:outputLabel for="trainName">Train name:</h:outputLabel>
+						<p:inputText id="trainName"
+							value="#{trainServiceBean.train.trainName}" required="true"
+							requiredMessage="Please, enter train name" label="Train name"
+							size="24">
+						</p:inputText>
+						<h:outputLabel for="departureStation">Departure station:</h:outputLabel>
+						<p:autoComplete id="departureStation" forceSelection="true"
+							value="#{trainServiceBean.train.departureStation}"
+							completeMethod="#{trainServiceBean.stationAutoComplete}"
+							required="true"
+							requiredMessage="Please, enter station of departure"
+							label="Departure station" size="24" />
+						<h:outputLabel for="arrivalStation">Arrival station:</h:outputLabel>
+						<p:autoComplete id="arrivalStation" forceSelection="true"
+							value="#{trainServiceBean.train.arrivalStation}"
+							completeMethod="#{trainServiceBean.stationAutoComplete}"
+							required="true"
+							requiredMessage="Please, enter station of arrival"
+							label="Departure station" size="24" />
+						<h:outputLabel for="departureTime">Departure time:</h:outputLabel>
+						<p:calendar id="departureTime"
+							value="#{trainServiceBean.train.departureTime}" pattern="HH:mm"
+							timeOnly="true" required="true"
+							requiredMessage="Please, enter time of departure in HH:mm format"
+							label="Departure time" size="24" />
+						<h:outputLabel for="arrivalTime">Arrival time:</h:outputLabel>
+						<p:calendar id="arrivalTime"
+							value="#{trainServiceBean.train.arrivalTime}" pattern="HH:mm"
+							timeOnly="true" required="true"
+							requiredMessage="Please, enter time of arrival in HH:mm format"
+							label="Arrival time" size="24" />
+						<h:outputLabel for="capacity">Capacity:</h:outputLabel>
+						<p:inputText id="capacity"
+							value="#{trainServiceBean.train.capacity}" required="true"
+							requiredMessage="Please, enter train capacity" label="Capacity"
+							size="24">
+						</p:inputText>
+						<p:commandButton id="confirm" value="Create"
+							update=":search-form:trains,newTrainDialogMessages"
+							oncomplete="newTrainDialog.hide()"
+							actionListener="#{trainServiceBean.addTrain}"
+							styleClass="jquery-button" />
+						<p:commandButton id="decline" value="Cancel"
+							onclick="newTrainDialog.hide()" type="button"
+							styleClass="jquery-button" />
+					</h:panelGrid>
+				</p:confirmDialog>
 			</h:form>
 		</div>
 	</div>

@@ -11,6 +11,39 @@
 <script type="text/javascript" src="js/js_actions.js"></script> -->
 </head>
 <body>
+
+					<h:outputLabel for="from">From:</h:outputLabel>
+					<p:inputText id="from" label="From"
+						value="#{timetableServiceBean.timetableDTO.departureStation}"
+						required="true"
+						requiredMessage="Please enter station of departure">
+					</p:inputText>
+					<p:message for="from" />
+
+					<h:outputLabel for="to">To:</h:outputLabel>
+					<p:inputText id="to" label="To"
+						value="#{timetableServiceBean.timetableDTO.arrivalStation}"
+						requiredMessage="Please enter station of arrival" required="true">
+					</p:inputText>
+					<p:message for="to" />
+					
+						<p:inputText id="departureStation"
+							value="#{trainServiceBean.train.departureStation}"
+							required="true"
+							requiredMessage="Please, enter station of departure"
+							label="Departure station" size="24">
+						</p:inputText>
+						<p:inputText id="arrivalStation"
+							value="#{trainServiceBean.train.arrivalStation}" required="true"
+							requiredMessage="Please, enter station of arrival"
+							label="Arrival station" size="24">
+						</p:inputText>
+						
+						<p:inputText id="passTrainNumber" label="Train Number"
+							value="#{trainServiceBean.trainNumber}" required="true"
+							requiredMessage="Please, enter train number" size="24">
+						</p:inputText>
+					
 	<!-- <filter>
 		<filter-name>AuthenticationFilter</filter-name>
 		<filter-class>AuthenticationFilter</filter-class>

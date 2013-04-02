@@ -41,12 +41,12 @@
 					<h:panelGroup />
 					<p:commandButton value="Sign in" ajax="false"
 						action="#{userBean.authenticateUser}" styleClass="jquery-button"></p:commandButton>
-					<h:messages globalOnly="true" layout="table" />
+					<p:messages globalOnly="true" layout="table" />
 				</h:panelGrid>
 			</h:form>
 
 			<h:form id="register-form">
-				<h:panelGrid columns="3">
+				<h:panelGrid id="registerFormPanel" columns="3">
 					<h:panelGroup />
 					<p:commandButton type="button" value="Home"
 						onclick="document.getElementById('register-form').style.display = 'none';document.getElementById('login-form').style.display = 'block'"
@@ -59,7 +59,7 @@
 					</p:inputText>
 					<p:message for="name" />
 
-					<h:outputLabel for="name">Surname:</h:outputLabel>
+					<h:outputLabel for="surname">Surname:</h:outputLabel>
 					<p:inputText id="surname" label="Surname"
 						value="#{userBean.user.surname}" required="true"
 						requiredMessage="Please enter your last name">
@@ -101,10 +101,10 @@
 					<p:message for="password" />
 
 					<h:panelGroup />
-					<p:commandButton value="Sign in" ajax="false"
-						action="#{userBean.registerUser}" styleClass="jquery-button">
+					<p:commandButton value="Sign in" action="#{userBean.registerUser}"
+						update="registerFormPanel" styleClass="jquery-button">
 					</p:commandButton>
-					<h:messages globalOnly="true" layout="table" />
+					<p:messages globalOnly="true" layout="table" />
 				</h:panelGrid>
 			</h:form>
 		</div>

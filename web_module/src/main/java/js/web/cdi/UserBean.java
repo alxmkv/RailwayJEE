@@ -21,6 +21,7 @@ import org.apache.logging.log4j.Logger;
 import js.dao.HibernateUtil;
 import js.dto.TicketDTO;
 import js.exception.DataAccessException;
+import js.exception.InvalidInputException;
 import js.exception.UserRegistrationFailedException;
 import js.service.UserService;
 import js.web.dto.Ticket;
@@ -47,6 +48,32 @@ public class UserBean implements Serializable {
 	private List<Ticket> ticketList;
 	private List<UserDTO> userList;
 	private User user = new User();
+	private String login;
+	private String userType;
+	private List<String> userLoginList;
+
+	public List<String> userLoginAutoComplete(String query) {
+		if (userLoginList == null || userLoginList.isEmpty()) {
+			userLoginList = new ArrayList<String>();
+			try {
+				Map<String, js.dto.UserDTO> users = userService.getAllUsers();
+				for (String login : users.keySet()) {
+					userLoginList.add(login);
+				}
+			} catch (DataAccessException e) {
+				logger.error(e.getLocalizedMessage());
+			}
+		}
+		List<String> results = new ArrayList<String>();
+		Iterator<String> iter = userLoginList.iterator();
+		while (iter.hasNext()) {
+			String userLogin = iter.next();
+			if (userLogin.toLowerCase().startsWith(query)) {
+				results.add(userLogin);
+			}
+		}
+		return results;
+	}
 
 	public String authenticateUser() {
 		HibernateUtil.init();
@@ -69,7 +96,7 @@ public class UserBean implements Serializable {
 					"Incorrect login or password", "");
 			logger.error(e.getLocalizedMessage());
 		}
-		return "index";
+		return "";
 	}
 
 	public String registerUser() {
@@ -96,7 +123,7 @@ public class UserBean implements Serializable {
 					"Registration failed", "Please, try again");
 			logger.error(e.getLocalizedMessage());
 		}
-		return "index";
+		return "";
 	}
 
 	public List<Ticket> getTicketList() {
@@ -160,6 +187,29 @@ public class UserBean implements Serializable {
 		return userList;
 	}
 
+	public void changeAccessRights() {
+		System.out.println("login = " + login + "; userType = " + userType);
+		if (login != null && !"".equalsIgnoreCase(login) && userType != null
+				&& !"".equalsIgnoreCase(userType)) {
+			System.out.println("changeAccessRights()");
+			Byte userTypeByte = "1".equalsIgnoreCase(userType) ? Byte
+					.valueOf("1") : Byte.valueOf("2");
+			try {
+				if (userService.setAccessRights(login, userTypeByte)) {
+					showDetailedMessage(FacesMessage.SEVERITY_INFO,
+							"User access rights changed successful!", "");
+				}
+			} catch (DataAccessException e) {
+				showDetailedMessage(FacesMessage.SEVERITY_ERROR,
+						"Could not update user access rights", "");
+				logger.error(e.getLocalizedMessage());
+			} catch (InvalidInputException e) {
+				showDetailedMessage(FacesMessage.SEVERITY_ERROR,
+						e.getLocalizedMessage(), "");
+			}
+		}
+	}
+
 	private void showDetailedMessage(Severity severity, String summary,
 			String detail) {
 		Iterator<FacesMessage> iter = FacesContext.getCurrentInstance()
@@ -174,5 +224,21 @@ public class UserBean implements Serializable {
 
 	public User getUser() {
 		return user;
+	}
+
+	public String getLogin() {
+		return login;
+	}
+
+	public void setLogin(String login) {
+		this.login = login;
+	}
+
+	public String getUserType() {
+		return userType;
+	}
+
+	public void setUserType(String userType) {
+		this.userType = userType;
 	}
 }

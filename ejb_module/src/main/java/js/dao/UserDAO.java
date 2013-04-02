@@ -7,6 +7,7 @@ import java.util.Set;
 import js.entity.Tickets;
 import js.entity.Users;
 import js.exception.DataAccessException;
+import js.exception.InvalidInputException;
 import js.exception.UserRegistrationFailedException;
 
 /**
@@ -51,4 +52,16 @@ public interface UserDAO {
 	 * @throws DataAccessException
 	 */
 	public Set<Tickets> getTicketsByUser(Users user) throws DataAccessException;
+
+	/**
+	 * @param login
+	 * @param userType
+	 *            2 for simple passenger, 1 for admin
+	 * @return <code>true</code> if user access rights are successfully changed,
+	 *         <code>false</code> otherwise
+	 * @throws DataAccessException
+	 * @throws InvalidInputException
+	 */
+	public Boolean setAccessRights(String login, Byte userType)
+			throws DataAccessException, InvalidInputException;
 }

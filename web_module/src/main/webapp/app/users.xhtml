@@ -44,6 +44,9 @@
 				<p:commandButton value="Update" styleClass="jquery-button"
 					update="users">
 				</p:commandButton>
+				<p:commandButton value="Change rights" onclick="usersDialog.show()"
+					styleClass="jquery-button">
+				</p:commandButton>
 
 				<p:growl id="messages" showDetail="true" />
 
@@ -73,6 +76,38 @@
 						<h:outputText value="#{tt.userType}" />
 					</p:column>
 				</p:dataTable>
+			</h:form>
+
+			<h:form id="usersDialogForm">
+				<p:growl id="usersDialogMessages" showDetail="true" />
+				<p:confirmDialog id="userDlg"
+					message="Please, enter user login and type"
+					header="Change access rights" severity="alert"
+					widgetVar="usersDialog">
+					<h:panelGrid id="userDlgDisplay" columns="2" cellpadding="4"
+						style="margin:0 auto;">
+						<h:outputLabel for="login">User login:</h:outputLabel>
+						<p:autoComplete id="login" forceSelection="true"
+							value="#{userBean.login}"
+							completeMethod="#{userBean.userLoginAutoComplete}"
+							required="true" requiredMessage="Please, enter user login"
+							label="User login" size="24" />
+						<h:outputLabel for="userType">User access rights:</h:outputLabel>
+						<p:selectOneMenu id="userType" value="#{userBean.userType}"
+							required="true" requiredMessage="Please, choose user type">
+							<f:selectItem itemLabel="Admin" itemValue="1" />
+							<f:selectItem itemLabel="Passenger" itemValue="2" />
+						</p:selectOneMenu>
+						<p:commandButton id="confirm" value="Change rights"
+							update=":search-form:users,usersDialogMessages"
+							oncomplete="usersDialog.hide()"
+							actionListener="#{userBean.changeAccessRights}"
+							styleClass="jquery-button" />
+						<p:commandButton id="decline" value="Cancel"
+							onclick="usersDialog.hide()" type="button"
+							styleClass="jquery-button" />
+					</h:panelGrid>
+				</p:confirmDialog>
 			</h:form>
 		</div>
 	</div>

@@ -189,15 +189,6 @@ div.ui-datepicker {
 	font-weight: bold;
 	width: 140px;
 }
-
-#login-form:register-button,#home-button,#login-button,#login-button-reg,#create-button,#search-button
-	{
-	-webkit-border-radius: 7px;
-	-moz-border-radius: 7px;
-	border-radius: 7px;
-	font-weight: bold;
-	width: 135px;
-}
 /* ========================================== */
 /* General */
 /* ========================================== */

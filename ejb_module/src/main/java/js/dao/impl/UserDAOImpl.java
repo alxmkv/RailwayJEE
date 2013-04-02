@@ -21,6 +21,7 @@ import js.dao.UserDAO;
 import js.entity.Tickets;
 import js.entity.Users;
 import js.exception.DataAccessException;
+import js.exception.InvalidInputException;
 import js.exception.UserRegistrationFailedException;
 
 /**
@@ -160,5 +161,30 @@ public class UserDAOImpl implements UserDAO {
 			HibernateUtil.closeSession();
 		}
 		return tickets;
+	}
+
+	@Override
+	public Boolean setAccessRights(String login, Byte userType)
+			throws DataAccessException, InvalidInputException {
+		try {
+			HibernateUtil.beginTransaction();
+			Users user = (Users) HibernateUtil.getSession()
+					.createCriteria(Users.class)
+					.add(Restrictions.eq("login", login)).uniqueResult();
+			if (user != null) {
+				user.setUserType(userType);
+				HibernateUtil.getSession().saveOrUpdate("Users", user);
+			} else {
+				throw new InvalidInputException("User " + login
+						+ " does not exist");
+			}
+			HibernateUtil.commitTransaction();
+		} catch (HibernateException e) {
+			HibernateUtil.rollbackTransaction();
+			throw new DataAccessException(e.getLocalizedMessage());
+		} finally {
+			HibernateUtil.closeSession();
+		}
+		return Boolean.TRUE;
 	}
 }

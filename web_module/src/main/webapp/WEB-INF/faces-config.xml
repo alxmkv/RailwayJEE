@@ -52,14 +52,6 @@
 		</navigation-case>
 	</navigation-rule>
 	<navigation-rule>
-		<from-view-id>/app/passengers.xhtml</from-view-id>
-		<navigation-case>
-			<from-outcome>index</from-outcome>
-			<to-view-id>/index.xhtml</to-view-id>
-			<redirect></redirect>
-		</navigation-case>
-	</navigation-rule>
-	<navigation-rule>
 		<from-view-id>/app/tickets.xhtml</from-view-id>
 		<navigation-case>
 			<from-outcome>index</from-outcome>
@@ -73,22 +65,6 @@
 			<from-outcome>index</from-outcome>
 			<to-view-id>/index.xhtml</to-view-id>
 			<redirect></redirect>
-		</navigation-case>
-	</navigation-rule>
-
-	<navigation-rule>
-		<from-view-id>/calculator.xhtml</from-view-id>
-		<navigation-case>
-			<from-outcome>success</from-outcome>
-			<to-view-id>/result.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-
-	<navigation-rule>
-		<from-view-id>/result.xhtml</from-view-id>
-		<navigation-case>
-			<from-outcome>back</from-outcome>
-			<to-view-id>/calculator.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 </faces-config>

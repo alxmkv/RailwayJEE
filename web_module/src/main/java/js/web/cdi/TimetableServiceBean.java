@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
@@ -21,6 +22,7 @@ import js.dto.TimetableServiceDTO;
 import js.exception.DataAccessException;
 import js.exception.InvalidInputException;
 import js.exception.TicketOrderFailedException;
+import js.service.StationService;
 import js.service.TicketService;
 import js.service.TimetableService;
 import js.web.dto.Timetable;
@@ -46,11 +48,38 @@ public class TimetableServiceBean implements Serializable {
 	private TimetableService timetableService;
 	@EJB
 	private TicketService ticketService;
+	@EJB
+	private StationService stationService;
 
 	private TimetableDTO timetableDTO = new TimetableDTO();
 	private Timetable selectedTimetableRow;
 
 	private List<Timetable> timetableList;
+	private List<String> stationList;
+
+	public List<String> stationAutoComplete(String query) {
+		if (stationList == null || stationList.isEmpty()) {
+			stationList = new ArrayList<String>();
+			try {
+				Set<String> stations = stationService.getAllStations();
+				Iterator<String> iter = stations.iterator();
+				while (iter.hasNext()) {
+					stationList.add(iter.next());
+				}
+			} catch (DataAccessException e) {
+				logger.error(e.getLocalizedMessage());
+			}
+		}
+		List<String> results = new ArrayList<String>();
+		Iterator<String> iter = stationList.iterator();
+		while (iter.hasNext()) {
+			String station = iter.next();
+			if (station.toLowerCase().startsWith(query)) {
+				results.add(station);
+			}
+		}
+		return results;
+	}
 
 	public List<Timetable> getTimetableList() {
 		timetableList = new ArrayList<Timetable>();
@@ -85,6 +114,7 @@ public class TimetableServiceBean implements Serializable {
 										trainNumberString).getArrivalTime()),
 								timetables.get(trainNumberString)
 										.getTicketsLeft().toString()));
+						clearMessages();
 					}
 				} else {
 					// [train number - train name, departure time, arrival
@@ -112,6 +142,7 @@ public class TimetableServiceBean implements Serializable {
 												trainNumber).getArrivalTime()),
 										timetables.get(trainNumber)
 												.getTicketsLeft().toString()));
+						clearMessages();
 					}
 				}
 			} catch (DataAccessException e) {
@@ -185,14 +216,18 @@ public class TimetableServiceBean implements Serializable {
 		}
 	}
 
-	private void showDetailedMessage(Severity severity, String summary,
-			String detail) {
+	private void clearMessages() {
 		Iterator<FacesMessage> iter = FacesContext.getCurrentInstance()
 				.getMessages();
 		while (iter.hasNext()) {
 			iter.next();
 			iter.remove();
 		}
+	}
+
+	private void showDetailedMessage(Severity severity, String summary,
+			String detail) {
+		clearMessages();
 		FacesContext.getCurrentInstance().addMessage(null,
 				new FacesMessage(severity, summary, detail));
 	}
